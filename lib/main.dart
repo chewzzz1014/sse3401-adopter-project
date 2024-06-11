@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'widgets/bottom_nav_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,54 +11,54 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Adoptr',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return const MaterialApp(
+      title: 'Adopter',
+      home: MyHomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
+  void _onClicked(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        title: const Text('Adoptr'),
+        centerTitle: true,
+        backgroundColor: const Color(0xffC738BD),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.05),
+            child: const Icon(Icons.person),
+          )
+        ],
       ),
       /*
-      Will act as a launchpad to all the pages for now
+      Change the body to test out your screens
        */
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(onPressed: () {}, child: const Text("Add Animal"))
-          ],
-        ),
-      ),
+      body: const Text('body'),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onClicked: _onClicked,
+      )
     );
   }
 }
