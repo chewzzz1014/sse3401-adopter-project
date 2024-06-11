@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './main_page_with_btm_nav.dart';
+import 'widgets/bottom_nav_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,8 +27,38 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
+  void _onClicked(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const HomePage();
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Adoptr'),
+        centerTitle: true,
+        backgroundColor: const Color(0xffC738BD),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.05),
+            child: const Icon(Icons.person),
+          )
+        ],
+      ),
+      /*
+      Change the body to test out your screens
+       */
+      body: const Text('body'),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onClicked: _onClicked,
+      )
+    );
   }
 }
