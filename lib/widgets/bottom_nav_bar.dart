@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onClicked;
 
@@ -11,25 +11,46 @@ class BottomNavBar extends StatelessWidget {
   });
 
   @override
+  State<BottomNavBar> createState() => _BottomNavBarState();
+}
+
+class _BottomNavBarState extends State<BottomNavBar> {
+  @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
-      currentIndex: selectedIndex,
-      onTap: onClicked,
-      selectedItemColor: const Color(0xffC738BD),
-      items: const [
+      currentIndex: widget.selectedIndex,
+      onTap: widget.onClicked,
+      // selectedItemColor: const Color(0xffC738BD),
+      items: [
+        BottomNavigationBarItem(
+          label: 'chat',
+          icon: Icon(
+            Icons.chat_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        BottomNavigationBarItem(
+          label: 'swipe',
+          icon: Icon(
+            Icons.swipe,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        BottomNavigationBarItem(
+          label: 'pet_list',
+          icon: Icon(
+            Icons.list_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
         BottomNavigationBarItem(
           label: 'profile',
-          icon: Icon(Icons.chat_outlined),
-        ),
-        BottomNavigationBarItem(
-          label: 'home',
-          icon: Icon(Icons.swipe),
-        ),
-        BottomNavigationBarItem(
-          label: 'settings',
-          icon: Icon(Icons.list_outlined),
+          icon: Icon(
+            Icons.person,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ],
     );
