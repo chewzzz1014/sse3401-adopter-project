@@ -22,34 +22,31 @@ class _BottomNavBarState extends State<BottomNavBar> {
       showUnselectedLabels: false,
       currentIndex: widget.selectedIndex,
       onTap: widget.onClicked,
-      // selectedItemColor: const Color(0xffC738BD),
-      items: [
+      selectedItemColor: Theme.of(context).colorScheme.tertiary,
+      unselectedItemColor: Colors.grey.shade600,
+      items: const [
         BottomNavigationBarItem(
           label: 'chat',
           icon: Icon(
-            Icons.chat_outlined,
-            color: Theme.of(context).colorScheme.primary,
+            Icons.message,
           ),
         ),
         BottomNavigationBarItem(
           label: 'swipe',
           icon: Icon(
             Icons.swipe,
-            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         BottomNavigationBarItem(
           label: 'pet_list',
           icon: Icon(
             Icons.list_outlined,
-            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         BottomNavigationBarItem(
           label: 'profile',
           icon: Icon(
             Icons.person,
-            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ],
