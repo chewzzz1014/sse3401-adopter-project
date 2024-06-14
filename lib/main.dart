@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sse3401_adopter_project/screens/chat-page.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sse3401_adopter_project/screens/chat/chat-list.dart';
+import 'package:sse3401_adopter_project/screens/chat/chat-page.dart';
 import 'package:sse3401_adopter_project/screens/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
 import 'package:sse3401_adopter_project/screens/user-profile.dart';
@@ -25,6 +27,7 @@ class MyApp extends StatelessWidget {
           secondary: Color(0xffC1C1C1),
           tertiary: Color(0xffEA7659),
         ),
+        textTheme: GoogleFonts.wellfleetTextTheme(Theme.of(context).textTheme),
       ),
       home: MyHomePage(),
       debugShowCheckedModeBanner: false,
@@ -45,13 +48,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onClicked(int index) {
     setState(() {
       _selectedIndex = index;
-      print(_selectedIndex);
     });
   }
 
   // assign btn nav bar item to pages (index is based on selectedIndex state)
   final _pageOptions = [
-    ChatPage(),
+    ChatListPage(),
     SwipeAnimalPage(),
     PetListPage(),
     UserProfilePage(),
@@ -62,9 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Adoptr'),
+          title: const Text(
+            'Adoptr',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+          ),
           centerTitle: true,
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          // backgroundColor: Theme.of(context).colorScheme.primary,
           actions: [
             Padding(
               padding: EdgeInsets.only(
