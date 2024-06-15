@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
 
 import 'package:sse3401_adopter_project/screens/chat/chat-list.dart';
-import 'package:sse3401_adopter_project/screens/pet-list.dart';
+import 'package:sse3401_adopter_project/screens/pet/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
 import 'package:sse3401_adopter_project/screens/user-profile.dart';
 import 'widgets/bottom_nav_bar.dart';
 
 Future<void> main() async {
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
   runApp(const MyApp());
 }
 
