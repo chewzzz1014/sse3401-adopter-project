@@ -10,79 +10,35 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../widgets/chat-page-header.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  String name;
+  String imageUrl;
+
+  ChatPage({
+    required this.name,
+    required this.imageUrl,
+  });
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final _uuid = const Uuid();
   final List<types.Message> _messages = [];
   final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   automaticallyImplyLeading: false,
-      //   backgroundColor: Colors.white,
-      //   flexibleSpace: SafeArea(
-      //     child: Container(
-      //       padding: const EdgeInsets.only(right: 16),
-      //       child: Row(
-      //         children: <Widget>[
-      //           IconButton(
-      //             onPressed: () {
-      //               Navigator.pop(context);
-      //             },
-      //             icon: const Icon(
-      //               Icons.arrow_back,
-      //               color: Colors.black,
-      //             ),
-      //           ),
-      //           const SizedBox(
-      //             width: 2,
-      //           ),
-      //           const CircleAvatar(
-      //             backgroundImage: AssetImage('images/userImage.jpg'),
-      //             maxRadius: 20,
-      //           ),
-      //           const SizedBox(
-      //             width: 12,
-      //           ),
-      //           Expanded(
-      //             child: Column(
-      //               crossAxisAlignment: CrossAxisAlignment.start,
-      //               mainAxisAlignment: MainAxisAlignment.center,
-      //               children: <Widget>[
-      //                 const Text(
-      //                   "Kriss Benwat",
-      //                   style: TextStyle(
-      //                       fontSize: 16, fontWeight: FontWeight.w600),
-      //                 ),
-      //                 const SizedBox(
-      //                   height: 6,
-      //                 ),
-      //                 Text(
-      //                   "Online",
-      //                   style: TextStyle(
-      //                       color: Colors.grey.shade600, fontSize: 13),
-      //                 ),
-      //               ],
-      //             ),
-      //           ),
-      //           const Icon(
-      //             Icons.settings,
-      //             color: Colors.black54,
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //   ),
-      // ),
+      appBar: ChatPageHeader(
+        name: widget.name,
+        imageUrl: widget.imageUrl,
+      ),
       body: Chat(
         messages: _messages,
         onAttachmentPressed: _handleAttachmentPressed,
@@ -90,6 +46,12 @@ class _ChatPageState extends State<ChatPage> {
         onPreviewDataFetched: _handlePreviewDataFetched,
         onSendPressed: _handleSendPressed,
         user: _user,
+        theme: DefaultChatTheme(
+          inputBackgroundColor: Theme.of(context).colorScheme.primary,
+          emptyChatPlaceholderTextStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
@@ -152,7 +114,7 @@ class _ChatPageState extends State<ChatPage> {
       final message = types.FileMessage(
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: randomString(),
+        id: _uuid.v4(),
         name: result.files.single.name,
         size: result.files.single.size,
         uri: result.files.single.path!,
@@ -177,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
         height: image.height.toDouble(),
-        id: randomString(),
+        id: _uuid.v4(),
         name: result.name,
         size: bytes.length,
         uri: result.path,
@@ -251,16 +213,10 @@ class _ChatPageState extends State<ChatPage> {
     final textMessage = types.TextMessage(
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: randomString(),
+      id: _uuid.v4(),
       text: message.text,
     );
 
     _addMessage(textMessage);
-  }
-
-  String randomString() {
-    final random = Random.secure();
-    final values = List<int>.generate(16, (i) => random.nextInt(255));
-    return base64UrlEncode(values);
   }
 }
