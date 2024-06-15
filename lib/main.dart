@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart';
+
 import 'package:sse3401_adopter_project/screens/chat/chat-list.dart';
-import 'package:sse3401_adopter_project/screens/chat/chat-page.dart';
 import 'package:sse3401_adopter_project/screens/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
 import 'package:sse3401_adopter_project/screens/user-profile.dart';
 import 'widgets/bottom_nav_bar.dart';
 
-void main() {
+Future<void> main() async {
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   runApp(const MyApp());
 }
 
@@ -66,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
           automaticallyImplyLeading: false,
           title: const Text(
             'Adoptr',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
           ),
           centerTitle: true,
           // backgroundColor: Theme.of(context).colorScheme.primary,

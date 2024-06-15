@@ -40,7 +40,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         BottomNavigationBarItem(
           label: 'pet_list',
           icon: Icon(
-            Icons.list_outlined,
+            IconData(0xe4a1, fontFamily: 'MaterialIcons'),
           ),
         ),
         BottomNavigationBarItem(

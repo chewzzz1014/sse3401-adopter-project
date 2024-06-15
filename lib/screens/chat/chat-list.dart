@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sse3401_adopter_project/widgets/chat-search-bar.dart';
 
 import '../../models/chat-user-model.dart';
 import '../../widgets/conversation-list.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatListPage extends StatefulWidget {
   const ChatListPage({super.key});
@@ -12,7 +16,15 @@ class ChatListPage extends StatefulWidget {
   State<ChatListPage> createState() => _ChatListPageState();
 }
 
+String randomString() {
+  final random = Random.secure();
+  final values = List<int>.generate(16, (i) => random.nextInt(255));
+  return base64UrlEncode(values);
+}
+
 class _ChatListPageState extends State<ChatListPage> {
+  final _uuid = const Uuid();
+
   List<ChatUsers> chatUsers = [
     ChatUsers(
       name: "Jane Russel",
@@ -55,24 +67,6 @@ class _ChatListPageState extends State<ChatListPage> {
       messageText: "Can you please share the file?",
       imageURL: "assets/images/userImage.jpg",
       time: "24 Feb",
-    ),
-    ChatUsers(
-      name: "John Wick",
-      messageText: "How are you?",
-      imageURL: "assets/images/userImage.jpg",
-      time: "18 Feb",
-    ),
-    ChatUsers(
-      name: "John Wick",
-      messageText: "How are you?",
-      imageURL: "assets/images/userImage.jpg",
-      time: "18 Feb",
-    ),
-    ChatUsers(
-      name: "John Wick",
-      messageText: "How are you?",
-      imageURL: "assets/images/userImage.jpg",
-      time: "18 Feb",
     ),
     ChatUsers(
       name: "John Wick",
