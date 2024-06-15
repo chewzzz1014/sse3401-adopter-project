@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class Animal {
   String id;
+  String imageUrl;
   String name;
   String gender;
   String type;
@@ -12,6 +13,7 @@ class Animal {
 
   Animal({
     required this.id,
+    required this.imageUrl,
     required this.name,
     required this.gender,
     required this.type,
