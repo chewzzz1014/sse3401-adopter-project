@@ -43,12 +43,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
             IconData(0xe4a1, fontFamily: 'MaterialIcons'),
           ),
         ),
-        BottomNavigationBarItem(
-          label: 'profile',
-          icon: Icon(
-            Icons.person,
-          ),
-        ),
       ],
     );
   }
