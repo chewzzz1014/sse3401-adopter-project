@@ -1,14 +1,25 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sse3401_adopter_project/screens/add-animal.dart';
 
 import 'package:sse3401_adopter_project/screens/chat/chat-list.dart';
+import 'package:sse3401_adopter_project/screens/login.dart';
 import 'package:sse3401_adopter_project/screens/pet/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
 import 'package:sse3401_adopter_project/screens/user-profile.dart';
+import 'package:sse3401_adopter_project/utils.dart';
 import 'widgets/bottom_nav_bar.dart';
 
-Future<void> main() async {
+void main() async {
+  await setup();
   runApp(const MyApp());
+}
+
+Future<void> setup() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupFirebase();
+  await registerServices();
 }
 
 class MyApp extends StatelessWidget {
@@ -29,8 +40,14 @@ class MyApp extends StatelessWidget {
         ),
         textTheme: GoogleFonts.wellfleetTextTheme(Theme.of(context).textTheme),
       ),
-      home: MyHomePage(),
+      // home: MyHomePage(),
       debugShowCheckedModeBanner: false,
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/addAnimal': (context) => const AnimalAddingPage(),
+        '/home': (context) => const MyHomePage()
+      },
     );
   }
 }
