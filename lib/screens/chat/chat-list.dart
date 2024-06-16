@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sse3401_adopter_project/widgets/chat-search-bar.dart';
 
+import '../../mockData/mock-user.dart';
 import '../../models/chat-user-model.dart';
 import '../../widgets/conversation-list.dart';
 import 'package:uuid/uuid.dart';
@@ -25,57 +26,6 @@ String randomString() {
 class _ChatListPageState extends State<ChatListPage> {
   final _uuid = const Uuid();
 
-  List<ChatUsers> chatUsers = [
-    ChatUsers(
-      name: "Jane Russel",
-      messageText: "Awesome Setup",
-      imageURL: "assets/images/userImage.jpg",
-      time: "Now",
-    ),
-    ChatUsers(
-      name: "Glady's Murphy",
-      messageText: "That's Great",
-      imageURL: "assets/images/userImage.jpg",
-      time: "Yesterday",
-    ),
-    ChatUsers(
-      name: "Jorge Henry",
-      messageText: "Hey where are you?",
-      imageURL: "assets/images/userImage.jpg",
-      time: "31 Mar",
-    ),
-    ChatUsers(
-      name: "Philip Fox",
-      messageText: "Busy! Call me in 20 mins",
-      imageURL: "assets/images/userImage.jpg",
-      time: "28 Mar",
-    ),
-    ChatUsers(
-      name: "Debra Hawkins",
-      messageText: "Thankyou, It's awesome",
-      imageURL: "assets/images/userImage.jpg",
-      time: "23 Mar",
-    ),
-    ChatUsers(
-      name: "Jacob Pena",
-      messageText: "will update you in evening",
-      imageURL: "assets/images/userImage.jpg",
-      time: "17 Mar",
-    ),
-    ChatUsers(
-      name: "Andrey Jones",
-      messageText: "Can you please share the file?",
-      imageURL: "assets/images/userImage.jpg",
-      time: "24 Feb",
-    ),
-    ChatUsers(
-      name: "John Wick",
-      messageText: "How are you?",
-      imageURL: "assets/images/userImage.jpg",
-      time: "18 Feb",
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +42,7 @@ class _ChatListPageState extends State<ChatListPage> {
                     Text(
                       "Conversations",
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

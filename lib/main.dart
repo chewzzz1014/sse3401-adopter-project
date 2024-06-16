@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
 
 import 'package:sse3401_adopter_project/screens/chat/chat-list.dart';
-import 'package:sse3401_adopter_project/screens/pet-list.dart';
+import 'package:sse3401_adopter_project/screens/pet/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
 import 'package:sse3401_adopter_project/screens/user-profile.dart';
 import 'widgets/bottom_nav_bar.dart';
 
 Future<void> main() async {
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
   runApp(const MyApp());
 }
 
@@ -27,10 +22,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color(0xffFFC97C),
-          primary: Color(0xffFFC97C),
-          secondary: Color(0xffC1C1C1),
-          tertiary: Color(0xffEA7659),
+          seedColor: const Color(0xffFFC97C),
+          primary: const Color(0xffFFC97C),
+          secondary: const Color(0xffC1C1C1),
+          tertiary: const Color(0xffEA7659),
         ),
         textTheme: GoogleFonts.wellfleetTextTheme(Theme.of(context).textTheme),
       ),
