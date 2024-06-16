@@ -45,28 +45,36 @@ class _AdoptionCardState extends State<AdoptionCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${user.name} have requested to adopt ${animal.name} on ${formattedDateTime}',
+                '${user.name} have requested to adopt ${animal.name} on $formattedDateTime',
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(status),
+                Text(
+                  status,
+                  style: TextStyle(color: getStatusColor(statusIdx)),
+                ),
                 Row(
                   children: [
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: statusIdx == 0 ? () {
                         // Implement approve logic
-                      },
-                      child: Text('Approve'),
+                      } : null,
+                      child: const Text(
+                        'Approve', style: TextStyle(color: Colors.black),
+                      ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     ElevatedButton(
-                      onPressed: () {
-                        // Implement reject logic
-                      },
-                      child: Text('Reject'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      onPressed: statusIdx == 0 ? () {
+                        // Implement approve logic
+                      } : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,),
+                      child: const Text(
+                        'Reject', style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
@@ -76,5 +84,22 @@ class _AdoptionCardState extends State<AdoptionCard> {
         ),
       ),
     );
+  }
+
+  Color getStatusColor(int status) {
+    switch (status) {
+      case 2:
+        return Colors.green;
+      case 1:
+        return Theme
+            .of(context)
+            .colorScheme
+            .tertiary; // Tertiary color
+      case 'pending':
+      default:
+        return Theme
+            .of(context)
+            .primaryColor;
+    }
   }
 }

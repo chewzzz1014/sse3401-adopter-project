@@ -42,7 +42,7 @@ class _ChatListPageState extends State<ChatListPage> {
                     Text(
                       "Conversations",
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

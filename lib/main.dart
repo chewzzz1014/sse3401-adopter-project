@@ -22,10 +22,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color(0xffFFC97C),
-          primary: Color(0xffFFC97C),
-          secondary: Color(0xffC1C1C1),
-          tertiary: Color(0xffEA7659),
+          seedColor: const Color(0xffFFC97C),
+          primary: const Color(0xffFFC97C),
+          secondary: const Color(0xffC1C1C1),
+          tertiary: const Color(0xffEA7659),
         ),
         textTheme: GoogleFonts.wellfleetTextTheme(Theme.of(context).textTheme),
       ),

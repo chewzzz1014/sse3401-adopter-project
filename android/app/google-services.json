@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "518554354592",
+    "project_id": "sse3401-adopter-project",
+    "storage_bucket": "sse3401-adopter-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518554354592:android:10635ae12109d779b39ac5",
+        "android_client_info": {
+          "package_name": "com.example.sse3401_adopter_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5r2QfzlRqpK47PLQikQt8kCB959v5y5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

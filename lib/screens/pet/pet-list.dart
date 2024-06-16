@@ -25,12 +25,12 @@ class _PetListPageState extends State<PetListPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            const TabBar(
-              tabs: [
-                Tab(text: 'My Animal'),
-                Tab(text: 'My Adoption Request'),
-              ],
-            ),
+          const TabBar(
+            tabs: [
+              Tab(text: 'My Animal'),
+              Tab(text: 'My Adoption Request'),
+            ],
+          ),
           Expanded(
             child: Container(
               child: TabBarView(
