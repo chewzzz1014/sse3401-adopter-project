@@ -36,7 +36,7 @@ List<AdoptionRequest> generateAdoptionRequests() {
     String petId = animalList[animalIndex].id;
     String userId = chatUsers[userIndex].userId;
     DateTime requestDate = DateTime.now().subtract(Duration(days: random.nextInt(30)));
-    int status = random.nextInt(2);
+    int status = random.nextInt(3);
 
     AdoptionRequest request = AdoptionRequest(
       requestId: requestId,

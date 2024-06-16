@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -8,7 +9,9 @@ class AuthService {
     return _user;
   }
 
-  AuthService() {}
+  AuthService() {
+    _firebaseAuth.authStateChanges().listen(authStateChangesStreamListener);
+  }
 
   Future<bool> login(String email, String password) async {
     try {
@@ -19,6 +22,24 @@ class AuthService {
         return true;
       }
     } catch (e) {
+      print(e);
+    }
+    return false;
+  }
+
+  void authStateChangesStreamListener(User? user) {
+    if(user != null) {
+      _user = user;
+    } else {
+      _user = null;
+    }
+  }
+
+  Future<bool> logout() async {
+    try {
+      await _firebaseAuth.signOut();
+      return true;
+    } catch(e) {
       print(e);
     }
     return false;

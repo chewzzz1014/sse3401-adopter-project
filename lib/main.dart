@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sse3401_adopter_project/screens/add-animal.dart';
 
@@ -8,12 +9,14 @@ import 'package:sse3401_adopter_project/screens/login.dart';
 import 'package:sse3401_adopter_project/screens/pet/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
 import 'package:sse3401_adopter_project/screens/user-profile.dart';
+import 'package:sse3401_adopter_project/services/auth_service.dart';
 import 'package:sse3401_adopter_project/utils.dart';
+import 'package:sse3401_adopter_project/widgets/appbar-top-right-menu.dart';
 import 'widgets/bottom_nav_bar.dart';
 
 void main() async {
   await setup();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 Future<void> setup() async {
@@ -23,7 +26,12 @@ Future<void> setup() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final GetIt _getIt = GetIt.instance;
+  late AuthService _authService;
+
+  MyApp({super.key}) {
+    _authService = _getIt.get<AuthService>();
+  }
 
   // This widget is the root of your application.
   @override
@@ -42,11 +50,12 @@ class MyApp extends StatelessWidget {
       ),
       // home: MyHomePage(),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
+      initialRoute: _authService.user != null ? '/home' : '/login',
       routes: {
         '/login': (context) => const LoginPage(),
         '/addAnimal': (context) => const AnimalAddingPage(),
-        '/home': (context) => const MyHomePage()
+        '/home': (context) => const MyHomePage(),
+        '/profile': (context) => const UserProfilePage(),
       },
     );
   }
@@ -73,7 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
     ChatListPage(),
     SwipeAnimalPage(),
     PetListPage(),
-    UserProfilePage(),
   ];
 
   @override
@@ -91,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Padding(
               padding: EdgeInsets.only(
                   right: MediaQuery.of(context).size.width * 0.05),
-              child: const Icon(Icons.person),
+              child: AppBarMenuButton(),
             )
           ],
         ),
