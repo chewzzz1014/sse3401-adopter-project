@@ -28,9 +28,7 @@ class _PetCardState extends State<PetCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return AnimalAddingPage();
-        }));
+        Navigator.pushNamed(context, '/addAnimal');
       },
       child: Card(
         margin: const EdgeInsets.all(8.0),
