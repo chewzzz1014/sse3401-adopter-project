@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
       initialRoute: _authService.user != null ? '/home' : '/login',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/addAnimal': (context) => const AnimalAddingPage(),
+        '/addAnimal': (context) => const AddPetForm(),
         '/home': (context) => const MyHomePage(),
         '/profile': (context) => const UserProfilePage(),
       },
@@ -69,12 +69,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final GetIt _getIt = GetIt.instance;
+  late AuthService _authService;
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = _getIt.get<AuthService>();
+  }
 
   void _onClicked(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  bool _onPressed() {
+    return false;
   }
 
   // assign btn nav bar item to pages (index is based on selectedIndex state)
