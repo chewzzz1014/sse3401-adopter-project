@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sse3401_adopter_project/services/navigation_service.dart';
 
 import '../services/auth_service.dart';
 
@@ -14,17 +15,19 @@ class AppBarMenuButton extends StatefulWidget {
 class _AppBarMenuButtonState extends State<AppBarMenuButton> {
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;
+  late NavigationService _navigationService;
 
   @override
   void initState() {
     super.initState();
     _authService = _getIt.get<AuthService>();
+    _navigationService = _getIt.get<NavigationService>();
   }
 
   Future<void> _logout() async {
     bool result = await _authService.logout();
     if(result) {
-      Navigator.pushReplacementNamed(context, '/login');
+      _navigationService.pushReplacementNamed('/login');
     }
   }
 
@@ -36,7 +39,7 @@ class _AppBarMenuButtonState extends State<AppBarMenuButton> {
         print('Selected: $result');
         switch (result) {
           case 'profile':
-            Navigator.pushNamed(context, '/profile');
+            _navigationService.pushNamed('/profile');
           case 'logout':
             await _logout();
             print('logout');

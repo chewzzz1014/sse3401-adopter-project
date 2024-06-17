@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+
+import '../services/auth_service.dart';
+import '../services/navigation_service.dart';
 
 class ChatPageHeader extends StatefulWidget implements PreferredSizeWidget {
   String name;
@@ -17,6 +21,17 @@ class ChatPageHeader extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _ChatPageHeaderState extends State<ChatPageHeader> {
+  final GetIt _getIt = GetIt.instance;
+  late AuthService _authService;
+  late NavigationService _navigationService;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = _getIt.get<AuthService>();
+    _navigationService = _getIt.get<NavigationService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -30,7 +45,7 @@ class _ChatPageHeaderState extends State<ChatPageHeader> {
             children: <Widget>[
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  _navigationService.goBack();
                 },
                 icon: const Icon(
                   Icons.arrow_back,

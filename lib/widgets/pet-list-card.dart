@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/screens/add-animal.dart';
 import 'package:sse3401_adopter_project/widgets/pet-personality-badge.dart';
 
 import '../models/animal.dart';
+import '../services/auth_service.dart';
+import '../services/navigation_service.dart';
 
 class PetCard extends StatefulWidget {
   Animal animal;
@@ -24,11 +27,22 @@ String shortenString(String id, int maxLength) {
 }
 
 class _PetCardState extends State<PetCard> {
+  final GetIt _getIt = GetIt.instance;
+  late AuthService _authService;
+  late NavigationService _navigationService;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = _getIt.get<AuthService>();
+    _navigationService = _getIt.get<NavigationService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/addAnimal');
+        _navigationService.pushNamed('/addAnimal');
       },
       child: Card(
         margin: const EdgeInsets.all(8.0),

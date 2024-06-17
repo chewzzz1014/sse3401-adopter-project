@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/services/auth_service.dart';
+import 'package:sse3401_adopter_project/services/navigation_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final GetIt _getIt = GetIt.instance;
   final _formKey = GlobalKey<FormState>();
   late AuthService _authService;
+  late NavigationService _navigationService;
   String? email;
   String? password;
 
@@ -21,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _authService = _getIt.get<AuthService>();
+    _navigationService = _getIt.get<NavigationService>();
   }
 
   String? _validateEmail(String? value) {
@@ -56,9 +59,8 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       bool result = await _authService.login(email!, password!);
-      print(result);
       if(result) {
-        Navigator.pushReplacementNamed(context, '/home');
+        _navigationService.pushReplacementNamed('/home');
       } else {
 
       }
