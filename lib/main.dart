@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sse3401_adopter_project/screens/add-animal.dart';
 
 import 'package:sse3401_adopter_project/screens/chat/chat-list.dart';
-import 'package:sse3401_adopter_project/screens/login.dart';
 import 'package:sse3401_adopter_project/screens/pet/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
 import 'package:sse3401_adopter_project/screens/user-profile.dart';

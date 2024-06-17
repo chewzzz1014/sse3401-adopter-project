@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sse3401_adopter_project/services/alert_service.dart';
 import 'package:sse3401_adopter_project/services/navigation_service.dart';
 
 import '../services/auth_service.dart';
@@ -16,17 +17,23 @@ class _AppBarMenuButtonState extends State<AppBarMenuButton> {
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;
   late NavigationService _navigationService;
+  late AlertService _alertService;
 
   @override
   void initState() {
     super.initState();
     _authService = _getIt.get<AuthService>();
     _navigationService = _getIt.get<NavigationService>();
+    _alertService = _getIt.get<AlertService>();
   }
 
   Future<void> _logout() async {
     bool result = await _authService.logout();
-    if(result) {
+    if (result) {
+      _alertService.showToast(
+        text: 'Successfully logged out',
+        icon: Icons.check,
+      );
       _navigationService.pushReplacementNamed('/login');
     }
   }

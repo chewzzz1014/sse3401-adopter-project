@@ -17,6 +17,19 @@ class AuthService {
     try {
       final credential = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      if (credential.user != null) {
+        _user = credential.user;
+        return true;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return false;
+  }
+
+  Future<bool> signup(String email, String password) async {
+    try {
+      final credential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       if(credential.user != null) {
         _user = credential.user;
         return true;
@@ -28,7 +41,7 @@ class AuthService {
   }
 
   void authStateChangesStreamListener(User? user) {
-    if(user != null) {
+    if (user != null) {
       _user = user;
     } else {
       _user = null;
@@ -39,7 +52,7 @@ class AuthService {
     try {
       await _firebaseAuth.signOut();
       return true;
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
     return false;
