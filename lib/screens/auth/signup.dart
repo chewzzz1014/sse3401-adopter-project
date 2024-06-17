@@ -75,7 +75,6 @@ class _SignUpPageState extends State<SignUpPage> {
               text: "User registered successfully",
               icon: Icons.check,
             );
-            _navigationService.goBack();
             _navigationService.pushReplacementNamed('/home');
           } else {
             throw Exception("Unable to upload user profile picture");
