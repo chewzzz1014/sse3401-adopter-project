@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class PersonalityBadge extends StatelessWidget {
   final String personality;
 
-  const PersonalityBadge({required this.personality});
+  const PersonalityBadge({super.key, required this.personality});
 
   @override
   Widget build(BuildContext context) {

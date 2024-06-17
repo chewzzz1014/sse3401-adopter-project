@@ -1,4 +1,3 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,7 +52,7 @@ class MyApp extends StatelessWidget {
       initialRoute: _authService.user != null ? '/home' : '/login',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/addAnimal': (context) => const AnimalAddingPage(),
+        '/addAnimal': (context) => const AddPetPage(),
         '/home': (context) => const MyHomePage(),
         '/profile': (context) => const UserProfilePage(),
       },
