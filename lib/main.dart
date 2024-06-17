@@ -10,6 +10,7 @@ import 'package:sse3401_adopter_project/screens/pet/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
 import 'package:sse3401_adopter_project/screens/user-profile.dart';
 import 'package:sse3401_adopter_project/services/auth_service.dart';
+import 'package:sse3401_adopter_project/services/navigation_service.dart';
 import 'package:sse3401_adopter_project/utils.dart';
 import 'package:sse3401_adopter_project/widgets/appbar-top-right-menu.dart';
 import 'widgets/bottom_nav_bar.dart';
@@ -28,9 +29,11 @@ Future<void> setup() async {
 class MyApp extends StatelessWidget {
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;
+  late NavigationService _navigationService;
 
   MyApp({super.key}) {
     _authService = _getIt.get<AuthService>();
+    _navigationService = _getIt.get<NavigationService>();
   }
 
   // This widget is the root of your application.
@@ -50,13 +53,9 @@ class MyApp extends StatelessWidget {
       ),
       // home: MyHomePage(),
       debugShowCheckedModeBanner: false,
+      navigatorKey: _navigationService.navigatorKey,
       initialRoute: _authService.user != null ? '/home' : '/login',
-      routes: {
-        '/login': (context) => const LoginPage(),
-        '/addAnimal': (context) => const AddPetForm(),
-        '/home': (context) => const MyHomePage(),
-        '/profile': (context) => const UserProfilePage(),
-      },
+      routes: _navigationService.routes,
     );
   }
 }

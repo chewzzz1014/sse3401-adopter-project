@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:file_picker/file_picker.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../services/auth_service.dart';
+import '../../services/navigation_service.dart';
 import '../../widgets/chat-page-header.dart';
 
 class ChatPage extends StatefulWidget {
@@ -28,6 +31,16 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final GetIt _getIt = GetIt.instance;
+  late AuthService _authService;
+  late NavigationService _navigationService;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = _getIt.get<AuthService>();
+    _navigationService = _getIt.get<NavigationService>();
+  }
   final _uuid = const Uuid();
   final List<types.Message> _messages = [];
   final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac');
@@ -73,7 +86,7 @@ class _ChatPageState extends State<ChatPage> {
             children: <Widget>[
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  _navigationService.goBack();
                   _handleImageSelection();
                 },
                 child: const Align(
@@ -83,7 +96,7 @@ class _ChatPageState extends State<ChatPage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  _navigationService.goBack();
                   _handleFileSelection();
                 },
                 child: const Align(
@@ -92,7 +105,7 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ),
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => _navigationService.goBack(),
                 child: const Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text('Cancel'),
