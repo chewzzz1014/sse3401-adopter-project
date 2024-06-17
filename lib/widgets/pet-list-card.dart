@@ -1,8 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
-import 'package:sse3401_adopter_project/screens/add-animal.dart';
 import 'package:sse3401_adopter_project/widgets/pet-personality-badge.dart';
 
 import '../models/animal.dart';

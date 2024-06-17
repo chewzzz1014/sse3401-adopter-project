@@ -1,13 +1,10 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sse3401_adopter_project/screens/add-animal.dart';
 
 import 'package:sse3401_adopter_project/screens/chat/chat-list.dart';
 import 'package:sse3401_adopter_project/screens/pet/pet-list.dart';
 import 'package:sse3401_adopter_project/screens/swipe-animal.dart';
-import 'package:sse3401_adopter_project/screens/user-profile.dart';
 import 'package:sse3401_adopter_project/services/auth_service.dart';
 import 'package:sse3401_adopter_project/services/navigation_service.dart';
 import 'package:sse3401_adopter_project/utils.dart';

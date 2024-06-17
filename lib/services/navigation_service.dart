@@ -12,7 +12,7 @@ class NavigationService {
 
   final Map<String, Widget Function(BuildContext)> _routes = {
     "/login": (context) => LoginPage(),
-    '/addAnimal': (context) => const AddPetForm(),
+    '/addAnimal': (context) => const AddPetPage(),
     '/home': (context) => const MyHomePage(),
     '/profile': (context) => const UserProfilePage(),
     '/signup': (context) => const SignUpPage(),
