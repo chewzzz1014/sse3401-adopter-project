@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:sse3401_adopter_project/screens/chat/chat-page.dart';
+import '../models/user_profile.dart';
 
 class ConversationList extends StatefulWidget {
-  String name;
-  String messageText;
-  String imageUrl;
-  String time;
-  bool isMessageRead;
+  final UserProfile userProfile;
+  final VoidCallback onTap;
 
   ConversationList({
-    required this.name,
-    required this.messageText,
-    required this.imageUrl,
-    required this.time,
-    required this.isMessageRead,
+    required this.userProfile,
+    required this.onTap,
   });
 
   @override
@@ -24,14 +18,7 @@ class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return ChatPage(
-            name: widget.name,
-            imageUrl: widget.imageUrl,
-          );
-        }));
-      },
+      onTap: widget.onTap,
       child: Container(
         padding:
             const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
@@ -41,7 +28,7 @@ class _ConversationListState extends State<ConversationList> {
               child: Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: AssetImage(widget.imageUrl),
+                    backgroundImage: NetworkImage(widget.userProfile.pfpURL!),
                     maxRadius: 30,
                   ),
                   const SizedBox(
@@ -54,20 +41,18 @@ class _ConversationListState extends State<ConversationList> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.name,
+                            widget.userProfile.username!,
                             style: TextStyle(fontSize: 16),
                           ),
                           const SizedBox(
                             height: 6,
                           ),
                           Text(
-                            widget.messageText,
+                            'Test message',
                             style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.grey.shade600,
-                                fontWeight: widget.isMessageRead
-                                    ? FontWeight.bold
-                                    : FontWeight.normal),
+                                fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
@@ -76,13 +61,12 @@ class _ConversationListState extends State<ConversationList> {
                 ],
               ),
             ),
-            Text(
-              widget.time,
+            const Text(
+              'Today',
               style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: widget.isMessageRead
-                      ? FontWeight.bold
-                      : FontWeight.normal),
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ],
         ),
