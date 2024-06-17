@@ -1,9 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/firebase_options.dart';
+import 'package:sse3401_adopter_project/services/alert_service.dart';
 import 'package:sse3401_adopter_project/services/auth_service.dart';
+import 'package:sse3401_adopter_project/services/database_service.dart';
+import 'package:sse3401_adopter_project/services/database_service.dart';
+import 'package:sse3401_adopter_project/services/media_service.dart';
+import 'package:sse3401_adopter_project/services/media_service.dart';
 import 'package:sse3401_adopter_project/services/navigation_service.dart';
-import 'package:sse3401_adopter_project/services/navigation_service.dart';
+import 'package:sse3401_adopter_project/services/storage_service.dart';
+import 'package:sse3401_adopter_project/services/storage_service.dart';
 
 Future<void> setupFirebase() async {
   await Firebase.initializeApp(
@@ -18,5 +24,17 @@ Future<void> registerServices() async {
   );
   getIt.registerSingleton<NavigationService>(
     NavigationService(),
+  );
+  getIt.registerSingleton<AlertService>(
+    AlertService(),
+  );
+  getIt.registerSingleton<MediaService>(
+    MediaService(),
+  );
+  getIt.registerSingleton<StorageService>(
+    StorageService(),
+  );
+  getIt.registerSingleton<DatabaseService>(
+    DatabaseService(),
   );
 }

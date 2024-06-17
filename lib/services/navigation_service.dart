@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:sse3401_adopter_project/screens/login.dart';
+import 'package:sse3401_adopter_project/screens/auth/login.dart';
+import 'package:sse3401_adopter_project/screens/auth/signup.dart';
 
 import '../main.dart';
 import '../screens/add-animal.dart';
@@ -14,6 +15,7 @@ class NavigationService {
     '/addAnimal': (context) => const AddPetForm(),
     '/home': (context) => const MyHomePage(),
     '/profile': (context) => const UserProfilePage(),
+    '/signup': (context) => const SignUpPage(),
   };
 
   GlobalKey<NavigatorState>? get navigatorKey {

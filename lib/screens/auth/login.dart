@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sse3401_adopter_project/constants.dart';
+import 'package:sse3401_adopter_project/services/alert_service.dart';
 import 'package:sse3401_adopter_project/services/auth_service.dart';
 import 'package:sse3401_adopter_project/services/navigation_service.dart';
 
@@ -13,9 +15,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GetIt _getIt = GetIt.instance;
-  final _formKey = GlobalKey<FormState>();
   late AuthService _authService;
   late NavigationService _navigationService;
+  late AlertService _alertService;
+
+  final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
 
@@ -24,17 +28,15 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _authService = _getIt.get<AuthService>();
     _navigationService = _getIt.get<NavigationService>();
+    _alertService = _getIt.get<AlertService>();
   }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter your email';
     }
-    const emailPattern =
-        r'^[^@]+@[^@]+\.[^@]+$';
-    final regExp = RegExp(emailPattern);
-    if (!regExp.hasMatch(value)) {
-      return 'Please enter a valid email';
+    if (!EMAIL_REGEX.hasMatch(value)) {
+      return 'Please enter a valid email address';
     }
     return null;
   }
@@ -59,10 +61,13 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       bool result = await _authService.login(email!, password!);
-      if(result) {
+      if (result) {
         _navigationService.pushReplacementNamed('/home');
       } else {
-
+        _alertService.showToast(
+          text: 'Failed to login, please try again',
+          icon: Icons.error,
+        );
       }
     }
   }
@@ -82,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 TextFormField(
                   decoration: const InputDecoration(
+                    suffix: Text('Email'),
                     labelText: 'Email',
                     border: OutlineInputBorder(),
                   ),
@@ -106,6 +112,19 @@ class _LoginPageState extends State<LoginPage> {
                 ElevatedButton(
                   onPressed: _login,
                   child: const Text('Login'),
+                ),
+                const SizedBox(height: 16.0),
+                GestureDetector(
+                  onTap: () {
+                    _navigationService.pushReplacementNamed('/signup');
+                  },
+                  child: const Text(
+                    "Don't have an account?",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ),
               ],
             ),
