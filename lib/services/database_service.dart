@@ -82,4 +82,9 @@ class DatabaseService {
     String chatID = generateChatID(uid1: uid1, uid2: uid2);
     return _chatsCollection?.doc(chatID).snapshots() as Stream<DocumentSnapshot<Chat>>;
   }
+
+  Future<DocumentSnapshot<UserProfile>> getCurrentUser(String uid) async {
+    final result = await _usersCollection?.doc(uid).get();
+    return result as DocumentSnapshot<UserProfile>;
+  }
 }

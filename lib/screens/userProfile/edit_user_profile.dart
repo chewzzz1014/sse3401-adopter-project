@@ -9,18 +9,18 @@ import 'package:sse3401_adopter_project/services/database_service.dart';
 import 'package:sse3401_adopter_project/services/media_service.dart';
 import 'package:sse3401_adopter_project/services/storage_service.dart';
 
-import '../../services/alert_service.dart';
-import '../../services/auth_service.dart';
-import '../../services/navigation_service.dart';
+import '../../../services/alert_service.dart';
+import '../../../services/auth_service.dart';
+import '../../../services/navigation_service.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+class EditUserProfilePage extends StatefulWidget {
+  const EditUserProfilePage({super.key});
 
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  _EditUserProfilePageState createState() => _EditUserProfilePageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _EditUserProfilePageState extends State<EditUserProfilePage> {
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;
   late NavigationService _navigationService;
@@ -65,12 +65,12 @@ class _SignUpPageState extends State<SignUpPage> {
           if (profileURL != null) {
             await _databaseService.createUserProfile(
                 userProfile: UserProfile(
-              uid: _authService.user!.uid,
-              username: _username,
-              pfpURL: profileURL,
-              phoneNumber: _phoneNumber,
-              age: _age,
-            ));
+                  uid: _authService.user!.uid,
+                  username: _username,
+                  pfpURL: profileURL,
+                  phoneNumber: _phoneNumber,
+                  age: _age,
+                ));
             _alertService.showToast(
               text: "User registered successfully",
               icon: Icons.check,
@@ -150,6 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Center(child: Text('Sign Up')),
+          automaticallyImplyLeading: false,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -157,7 +158,7 @@ class _SignUpPageState extends State<SignUpPage> {
             key: _formKey,
             child: Padding(
               padding:
-                  const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 30.0),
+              const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 30.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -226,22 +227,27 @@ class _SignUpPageState extends State<SignUpPage> {
                     onSaved: (value) => _age = value,
                     validator: _validateAge,
                   ),
-                  Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: _submitForm,
-                        child: const Text('Sign Up'),
+                        // onPressed: _isFormValid ? _validateInputs : null,
+                        onPressed: (){},
+                        child: Text(
+                          'Edit-',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
                       ),
-                      GestureDetector(
-                        onTap: () {
+                      const SizedBox(width: 16.0),
+                      OutlinedButton(
+                        onPressed: () {
                           _navigationService.goBack();
                         },
-                        child: const Text(
-                          "Already have an account?",
+                        child: Text(
+                          'Cancel',
                           style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                          ),
+                              color: Theme.of(context).colorScheme.primary),
                         ),
                       ),
                     ],
