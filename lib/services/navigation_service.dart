@@ -5,7 +5,7 @@ import 'package:sse3401_adopter_project/screens/auth/signup.dart';
 
 import '../main.dart';
 import '../screens/add-animal.dart';
-import '../screens/user-profile.dart';
+import '../screens/userProfile/user-profile.dart';
 
 class NavigationService {
 
