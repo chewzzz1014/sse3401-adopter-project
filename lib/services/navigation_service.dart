@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:sse3401_adopter_project/screens/auth/login.dart';
 import 'package:sse3401_adopter_project/screens/auth/signup.dart';
 
@@ -28,6 +29,10 @@ class NavigationService {
 
   NavigationService() {
     _navigatorKey = GlobalKey<NavigatorState>();
+  }
+
+  void push(MaterialPageRoute route) {
+    _navigatorKey.currentState?.push(route);
   }
 
   void pushNamed(String routeName) {

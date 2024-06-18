@@ -1,29 +1,26 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:file_picker/file_picker.dart';
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
+import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:sse3401_adopter_project/services/database_service.dart';
+import 'package:sse3401_adopter_project/services/media_service.dart';
+import 'package:sse3401_adopter_project/services/storage_service.dart';
+import 'package:sse3401_adopter_project/utils.dart';
 
+import '../../models/chat.dart';
+import '../../models/message.dart';
+import '../../models/user_profile.dart';
 import '../../services/auth_service.dart';
-import '../../services/navigation_service.dart';
 import '../../widgets/chat-page-header.dart';
 
 class ChatPage extends StatefulWidget {
-  String name;
-  String imageUrl;
+  final UserProfile chatUser;
 
   ChatPage({
-    required this.name,
-    required this.imageUrl,
+    required this.chatUser,
   });
 
   @override
@@ -33,203 +30,139 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;
-  late NavigationService _navigationService;
+  late DatabaseService _databaseService;
+  late MediaService _mediaService;
+  late StorageService _storageService;
+
+  ChatUser? currentUser, otherUser;
 
   @override
   void initState() {
     super.initState();
     _authService = _getIt.get<AuthService>();
-    _navigationService = _getIt.get<NavigationService>();
+    _databaseService = _getIt.get<DatabaseService>();
+    _mediaService = _getIt.get<MediaService>();
+    _storageService = _getIt.get<StorageService>();
+    currentUser = ChatUser(
+      id: _authService.user!.uid,
+      firstName: _authService.user!.displayName,
+    );
+    otherUser = ChatUser(
+      id: widget.chatUser.uid!,
+      firstName: widget.chatUser.username,
+      profileImage: widget.chatUser.pfpURL,
+    );
   }
-  final _uuid = const Uuid();
-  final List<types.Message> _messages = [];
-  final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ChatPageHeader(
-        name: widget.name,
-        imageUrl: widget.imageUrl,
+        name: widget.chatUser.username!,
+        imageUrl: widget.chatUser.pfpURL!,
       ),
-      body: Chat(
-        messages: _messages,
-        onAttachmentPressed: _handleAttachmentPressed,
-        onMessageTap: _handleMessageTap,
-        onPreviewDataFetched: _handlePreviewDataFetched,
-        onSendPressed: _handleSendPressed,
-        user: _user,
-        theme: DefaultChatTheme(
-          inputBackgroundColor: Theme.of(context).colorScheme.primary,
-          emptyChatPlaceholderTextStyle: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
+      body: StreamBuilder(
+          stream: _databaseService.getChatData(currentUser!.id, otherUser!.id),
+          builder: (context, snapshot) {
+            Chat? chat = snapshot.data?.data();
+            List<ChatMessage> messages = [];
 
-  void _addMessage(types.Message message) {
-    setState(() {
-      _messages.insert(0, message);
-    });
-  }
+            if (chat != null && chat.messages != null) {
+              messages = _generateChatMessagesList(chat.messages!);
+            }
 
-  void _handleAttachmentPressed() {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) => SafeArea(
-        child: SizedBox(
-          height: 144,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextButton(
-                onPressed: () {
-                  _navigationService.goBack();
-                  _handleImageSelection();
-                },
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Photo'),
-                ),
+            return DashChat(
+              messageOptions: const MessageOptions(
+                showOtherUsersAvatar: true,
+                showTime: true,
               ),
-              TextButton(
-                onPressed: () {
-                  _navigationService.goBack();
-                  _handleFileSelection();
-                },
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('File'),
-                ),
+              inputOptions: InputOptions(
+                alwaysShowSend: true,
+                trailing: [
+                  _mediaMessageButton(),
+                ],
               ),
-              TextButton(
-                onPressed: () => _navigationService.goBack(),
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Cancel'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+              currentUser: currentUser!,
+              onSend: _sendMessage,
+              messages: messages,
+            );
+          }),
     );
   }
 
-  void _handleFileSelection() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-    );
-
-    if (result != null && result.files.single.path != null) {
-      final message = types.FileMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: _uuid.v4(),
-        name: result.files.single.name,
-        size: result.files.single.size,
-        uri: result.files.single.path!,
-      );
-
-      _addMessage(message);
-    }
-  }
-
-  void _handleImageSelection() async {
-    final result = await ImagePicker().pickImage(
-      imageQuality: 70,
-      maxWidth: 1440,
-      source: ImageSource.gallery,
-    );
-
-    if (result != null) {
-      final bytes = await result.readAsBytes();
-      final image = await decodeImageFromList(bytes);
-
-      final message = types.ImageMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        height: image.height.toDouble(),
-        id: _uuid.v4(),
-        name: result.name,
-        size: bytes.length,
-        uri: result.path,
-        width: image.width.toDouble(),
-      );
-
-      _addMessage(message);
-    }
-  }
-
-  void _handleMessageTap(BuildContext _, types.Message message) async {
-    if (message is types.FileMessage) {
-      var localPath = message.uri;
-
-      if (message.uri.startsWith('http')) {
-        try {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
-            isLoading: true,
-          );
-
-          setState(() {
-            _messages[index] = updatedMessage;
-          });
-
-          final client = http.Client();
-          final request = await client.get(Uri.parse(message.uri));
-          final bytes = request.bodyBytes;
-          final documentsDir = (await getApplicationDocumentsDirectory()).path;
-          localPath = '$documentsDir/${message.name}';
-
-          if (!File(localPath).existsSync()) {
-            final file = File(localPath);
-            await file.writeAsBytes(bytes);
-          }
-        } finally {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
-            isLoading: null,
-          );
-
-          setState(() {
-            _messages[index] = updatedMessage;
-          });
-        }
+  Future<void> _sendMessage(ChatMessage chatMessage) async {
+    if (chatMessage.medias?.isNotEmpty ?? false) {
+      if (chatMessage.medias!.first.type == MediaType.image) {
+        Message message = Message(
+            senderID: currentUser!.id,
+            content: chatMessage.medias!.first.url,
+            messageType: MessageType.Image,
+            sentAt: Timestamp.fromDate(chatMessage.createdAt));
+        await _databaseService.sendChatMessage(
+            currentUser!.id, otherUser!.id, message);
       }
-
-      await OpenFilex.open(localPath);
+    } else {
+      print('zzzzzz');
+      Message message = Message(
+        senderID: currentUser!.id,
+        content: chatMessage.text,
+        messageType: MessageType.Text,
+        sentAt: Timestamp.fromDate(chatMessage.createdAt),
+      );
+      await _databaseService.sendChatMessage(
+          currentUser!.id, otherUser!.id, message);
     }
   }
 
-  void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
-  ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = (_messages[index] as types.TextMessage).copyWith(
-      previewData: previewData,
-    );
-
-    setState(() {
-      _messages[index] = updatedMessage;
+  List<ChatMessage> _generateChatMessagesList(List<Message> messages) {
+    List<ChatMessage> chatMessages = messages.map((m) {
+      if (m.messageType == MessageType.Image) {
+        return ChatMessage(
+            user: m.senderID == currentUser!.id ? currentUser! : otherUser!,
+            medias: [
+              ChatMedia(url: m.content!, fileName: "", type: MediaType.image)
+            ],
+            createdAt: m.sentAt!.toDate());
+      } else {
+        return ChatMessage(
+            user: m.senderID == currentUser!.id ? currentUser! : otherUser!,
+            text: m.content!,
+            createdAt: m.sentAt!.toDate());
+      }
+    }).toList();
+    chatMessages.sort((a, b) {
+      return b.createdAt.compareTo(a.createdAt);
     });
+    return chatMessages;
   }
 
-  void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-      author: _user,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: _uuid.v4(),
-      text: message.text,
+  Widget _mediaMessageButton() {
+    return IconButton(
+      onPressed: () async {
+        File? file = await _mediaService.getImageFromGallery();
+        if (file != null) {
+          String chatID = generateChatID(
+            uid1: currentUser!.id,
+            uid2: otherUser!.id,
+          );
+          String? downloadURL = await _storageService.uploadImageToChat(
+              file: file, chatID: chatID);
+          if (downloadURL != null) {
+            ChatMessage chatMessage = ChatMessage(
+                user: currentUser!,
+                createdAt: DateTime.now(),
+                medias: [
+                  ChatMedia(
+                      url: downloadURL, fileName: "", type: MediaType.image)
+                ]);
+            _sendMessage(chatMessage);
+          }
+        }
+      },
+      icon: Icon(
+        Icons.image,
+        color: Theme.of(context).colorScheme.primary,
+      ),
     );
-
-    _addMessage(textMessage);
   }
 }

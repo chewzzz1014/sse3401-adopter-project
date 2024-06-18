@@ -5,12 +5,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/models/user_profile.dart';
+import 'package:sse3401_adopter_project/screens/chat/chat-page.dart';
 import 'package:sse3401_adopter_project/services/database_service.dart';
 import 'package:sse3401_adopter_project/widgets/chat-search-bar.dart';
 
 import '../../mockData/mock-user.dart';
 import '../../models/chat-user-model.dart';
 import '../../services/auth_service.dart';
+import '../../services/navigation_service.dart';
 import '../../widgets/conversation-list.dart';
 import 'package:uuid/uuid.dart';
 
@@ -31,12 +33,14 @@ class _ChatListPageState extends State<ChatListPage> {
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;
   late DatabaseService _databaseService;
+  late NavigationService _navigationService;
 
   @override
   void initState() {
     super.initState();
     _authService = _getIt.get<AuthService>();
     _databaseService = _getIt.get<DatabaseService>();
+    _navigationService = _getIt.get<NavigationService>();
   }
 
   @override
@@ -96,6 +100,13 @@ class _ChatListPageState extends State<ChatListPage> {
                                   user.uid!,
                                 );
                               }
+                              _navigationService.push(
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return ChatPage(chatUser: user);
+                                  },
+                                ),
+                              );
                             },
                           );
                         },
