@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import '../constants.dart';
 import '../services/auth_service.dart';
 import '../services/navigation_service.dart';
 
@@ -22,18 +23,21 @@ class ChatPageHeader extends StatefulWidget implements PreferredSizeWidget {
 
 class _ChatPageHeaderState extends State<ChatPageHeader> {
   final GetIt _getIt = GetIt.instance;
-  late AuthService _authService;
   late NavigationService _navigationService;
 
   @override
   void initState() {
     super.initState();
-    _authService = _getIt.get<AuthService>();
     _navigationService = _getIt.get<NavigationService>();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    var imageURL = (widget.imageUrl.isEmpty)
+        ? USER_PLACEHOLDER_IMG
+        : widget.imageUrl;
+
     return AppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
@@ -56,7 +60,7 @@ class _ChatPageHeaderState extends State<ChatPageHeader> {
                 width: 2,
               ),
               CircleAvatar(
-                backgroundImage: AssetImage(widget.imageUrl),
+                backgroundImage: NetworkImage(imageURL),
                 maxRadius: 20,
               ),
               const SizedBox(

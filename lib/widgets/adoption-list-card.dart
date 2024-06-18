@@ -94,12 +94,13 @@ class _AdoptionCardState extends State<AdoptionCard> {
         return Theme
             .of(context)
             .colorScheme
-            .tertiary; // Tertiary color
+            .primary; // Tertiary color
       case 'pending':
       default:
         return Theme
             .of(context)
-            .primaryColor;
+            .colorScheme
+            .tertiary;
     }
   }
 }

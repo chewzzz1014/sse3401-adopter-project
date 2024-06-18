@@ -40,10 +40,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xffFFC97C),
-          primary: const Color(0xffFFC97C),
+          seedColor: const Color(0xffEA7659),
+          primary: const Color(0xffEA7659),
           secondary: const Color(0xffC1C1C1),
-          tertiary: const Color(0xffEA7659),
+          tertiary: const Color(0xffFFC97C),
         ),
         textTheme: GoogleFonts.wellfleetTextTheme(Theme.of(context).textTheme),
       ),

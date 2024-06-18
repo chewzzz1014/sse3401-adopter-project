@@ -22,7 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       showUnselectedLabels: false,
       currentIndex: widget.selectedIndex,
       onTap: widget.onClicked,
-      selectedItemColor: Theme.of(context).colorScheme.tertiary,
+      selectedItemColor: Theme.of(context).colorScheme.primary,
       unselectedItemColor: Colors.grey.shade600,
       items: const [
         BottomNavigationBarItem(

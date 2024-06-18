@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants.dart';
 import '../models/user_profile.dart';
 
 class ConversationList extends StatefulWidget {
@@ -17,6 +18,11 @@ class ConversationList extends StatefulWidget {
 class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
+    var imageURL = (widget.userProfile.pfpURL == null ||
+            widget.userProfile.pfpURL!.isEmpty)
+        ? USER_PLACEHOLDER_IMG
+        : widget.userProfile.pfpURL;
+
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
@@ -28,7 +34,7 @@ class _ConversationListState extends State<ConversationList> {
               child: Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(widget.userProfile.pfpURL!),
+                    backgroundImage: NetworkImage(imageURL!) as ImageProvider,
                     maxRadius: 30,
                   ),
                   const SizedBox(
