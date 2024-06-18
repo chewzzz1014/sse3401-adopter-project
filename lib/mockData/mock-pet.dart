@@ -6,7 +6,7 @@ final Uuid uuid = Uuid();
 List<Animal> animalList = [
   Animal(
     id: uuid.v4(),
-    imageUrl: 'assets/images/userImage.jpg',
+    imageUrl: 'assets/images/dog-1.jpg',
     name: 'Max',
     gender: 'Male',
     type: 'Dog',
@@ -17,7 +17,7 @@ List<Animal> animalList = [
   ),
   Animal(
     id: uuid.v4(),
-    imageUrl: 'assets/images/userImage.jpg',
+    imageUrl: 'assets/images/cat-1.jpg',
     name: 'Bella',
     gender: 'Female',
     type: 'Cat',
@@ -28,7 +28,7 @@ List<Animal> animalList = [
   ),
   Animal(
     id: uuid.v4(),
-    imageUrl: 'assets/images/userImage.jpg',
+    imageUrl: 'assets/images/rabbit-1.jpg',
     name: 'Charlie',
     gender: 'Male',
     type: 'Rabbit',
@@ -39,7 +39,7 @@ List<Animal> animalList = [
   ),
   Animal(
     id: uuid.v4(),
-    imageUrl: 'assets/images/userImage.jpg',
+    imageUrl: 'assets/images/bird-1.jpg',
     name: 'Lucy',
     gender: 'Female',
     type: 'Bird',
@@ -50,7 +50,7 @@ List<Animal> animalList = [
   ),
   Animal(
     id: uuid.v4(),
-    imageUrl: 'assets/images/userImage.jpg',
+    imageUrl: 'assets/images/dog-2.jpg',
     name: 'Max',
     gender: 'Male',
     type: 'Dog',
@@ -61,7 +61,7 @@ List<Animal> animalList = [
   ),
   Animal(
     id: uuid.v4(),
-    imageUrl: 'assets/images/userImage.jpg',
+    imageUrl: 'assets/images/cat-2.jpg',
     name: 'Bella',
     gender: 'Female',
     type: 'Cat',
@@ -72,7 +72,7 @@ List<Animal> animalList = [
   ),
   Animal(
     id: uuid.v4(),
-    imageUrl: 'assets/images/userImage.jpg',
+    imageUrl: 'assets/images/dog-3.jpg',
     name: 'Max',
     gender: 'Male',
     type: 'Dog',
@@ -83,7 +83,7 @@ List<Animal> animalList = [
   ),
   Animal(
     id: uuid.v4(),
-    imageUrl: 'assets/images/userImage.jpg',
+    imageUrl: 'assets/images/cat-3.jpg',
     name: 'Bella',
     gender: 'Female',
     type: 'Cat',
@@ -94,12 +94,7 @@ List<Animal> animalList = [
   ),
 ];
 
-Animal getAnimalById(String id) {
-  for (Animal animal in animalList) {
-    if (animal.id == id) {
-      return animal;
-    }
-  }
-  // Return null if no animal with the given id is found
-  return animalList[0];
+Animal? getAnimalById(String id) {
+  return animalList.firstWhere((animal) => animal.id == id);
+  // Return null if no animal with the given id is found with ? operator
 }

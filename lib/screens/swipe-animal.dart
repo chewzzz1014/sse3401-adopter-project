@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tindercard_plus/flutter_tindercard_plus.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:sse3401_adopter_project/mockData/mock-pet.dart';
+import 'package:sse3401_adopter_project/widgets/multi_select_tags_drop_down.dart';
+import 'package:sse3401_adopter_project/constants.dart' as Constants;
+import 'package:appinio_swiper/appinio_swiper.dart';
+import 'package:sse3401_adopter_project/widgets/swiping-card.dart';
+
+import '../models/animal.dart';
+import '../widgets/swiping-buttons.dart';
 
 class SwipeAnimalPage extends StatefulWidget {
   const SwipeAnimalPage({super.key});
@@ -10,58 +18,122 @@ class SwipeAnimalPage extends StatefulWidget {
 
 class _SwipeAnimalPageState extends State<SwipeAnimalPage>
     with TickerProviderStateMixin {
-  List<String> petsImages = [
-    'https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'https://images.unsplash.com/photo-1583511655826-05700d52f4d9?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  ];
+  late List<Animal> petsFiltered = animalList;
+
+  final MultiSelectController _multiDropdownController =
+      MultiSelectController();
+  final AppinioSwiperController controller = AppinioSwiperController();
+
+  static const List<String> _initialTags = Constants.personalityTags;
+
+  @override
+  void initState() {
+    super.initState();
+    _multiDropdownController.setOptions(_initialTags.map((tag) {
+      return ValueItem<String>(
+        label: tag,
+        value: tag,
+      );
+    }).toList());
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    if (petsFiltered.isNotEmpty) {
+      for (var pet in petsFiltered) {
+        await precacheImage(AssetImage(pet.imageUrl), context);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    CardController cardController;
-
-    return Column(
-      children: [
-
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
-          child: TinderSwapCard(
-            swipeUp: true,
-            swipeDown: true,
-            orientation: AmassOrientation.bottom,
-            totalNum: petsImages.length,
-            stackNum: 3,
-            swipeEdge: 4.0,
-            maxWidth: MediaQuery.of(context).size.width * 0.9,
-            maxHeight: MediaQuery.of(context).size.width * 0.9,
-            minWidth: MediaQuery.of(context).size.width * 0.8,
-            minHeight: MediaQuery.of(context).size.width * 0.8,
-            cardBuilder: (context, index) => Card(
-              elevation: 3.0,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Image.network(
-                petsImages[index],
-                fit: BoxFit.cover,
+    return Center(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Column(
+          children: [
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Filter the list:",
+                style: TextStyle(fontSize: 16),
               ),
             ),
-            cardController: cardController = CardController(),
-            swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
-              /// Get swiping card's alignment
-              if (align.x < 0) {
-                //Card is LEFT swiping
-              } else if (align.x > 0) {
-                //Card is RIGHT swiping
-              }
-            },
-            swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
-              /// Get orientation & index of swiped card!
-            },
-          ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: MultiSelectTagsDropDown(
+                multiDropdownController: _multiDropdownController,
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: FutureBuilder(
+                future: Future.wait(petsFiltered.map(
+                    (pet) => precacheImage(AssetImage(pet.imageUrl), context))),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return AppinioSwiper(
+                      duration: const Duration(milliseconds: 500),
+                      invertAngleOnBottomDrag: true,
+                      backgroundCardCount: 2,
+                      swipeOptions: const SwipeOptions.all(),
+                      controller: controller,
+                      onCardPositionChanged: (
+                        SwiperPosition position,
+                      ) {},
+                      onSwipeEnd: _swipeEnd,
+                      onEnd: _onEnd,
+                      cardCount: petsFiltered.length,
+                      cardBuilder: (BuildContext context, int index) {
+                        return AnimalCard(animal: petsFiltered[index]);
+                      },
+                    );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+            ),
+            const SizedBox(height: 60),
+            IconTheme.merge(
+              data: const IconThemeData(size: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  swipeLeftButton(controller),
+                  swipeRightButton(controller),
+                ],
+              ),
+            )
+          ],
         ),
-      ]
+      ),
     );
+  }
+
+  void _swipeEnd(int previousIndex, int targetIndex, SwiperActivity activity) {
+    switch (activity) {
+      case Swipe():
+        // log('The card was swiped to the : ${activity.direction}');
+        // log('previous index: $previousIndex, target index: $targetIndex');
+        break;
+      case Unswipe():
+        // log('A ${activity.direction.name} swipe was undone.');
+        // log('previous index: $previousIndex, target index: $targetIndex');
+        break;
+      case CancelSwipe():
+        // log('A swipe was cancelled');
+        break;
+      case DrivenActivity():
+        // log('Driven Activity');
+        break;
+    }
+  }
+
+  void _onEnd() {
+    //
   }
 }

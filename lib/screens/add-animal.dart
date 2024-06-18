@@ -302,7 +302,7 @@ class _AddPetPageState extends State<AddPetPage> {
                   child: Text(
                     'Upload a picture!',
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.tertiary),
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                 ),
               ),
@@ -322,7 +322,7 @@ class _AddPetPageState extends State<AddPetPage> {
                   child: Text(
                     'Upload health documents!',
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.tertiary),
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                 ),
               ),
@@ -335,7 +335,7 @@ class _AddPetPageState extends State<AddPetPage> {
                     child: Text(
                       'Submit',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.tertiary),
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                   const SizedBox(width: 16.0),
@@ -346,7 +346,7 @@ class _AddPetPageState extends State<AddPetPage> {
                     child: Text(
                       'Cancel',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.tertiary),
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ],
