@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:textfield_tags/textfield_tags.dart';
-import '../const/constants.dart' as Constants;
+import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:sse3401_adopter_project/widgets/multi_select_tags_drop_down.dart';
+
+import '../constants.dart' as Constants;
 
 enum Sex { Male, Female }
 
@@ -36,27 +38,26 @@ class _AddPetPageState extends State<AddPetPage> {
   PlatformFile? pickedPicture;
   PlatformFile? pickedHealthDoc;
 
-  late StringTagController _stringTagController;
-  late double _distanceToField;
+  final MultiSelectController _multiDropdownController =
+      MultiSelectController();
 
   static const List<String> _initialTags = Constants.personalityTags;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _distanceToField = MediaQuery.of(context).size.width;
-  }
-
-  @override
   void initState() {
     super.initState();
-    _stringTagController = StringTagController();
+    _multiDropdownController.setOptions(_initialTags.map((tag) {
+      return ValueItem<String>(
+        label: tag,
+        value: tag,
+      );
+    }).toList());
   }
 
   @override
   void dispose() {
     super.dispose();
-    _stringTagController.dispose();
+    _multiDropdownController.dispose();
   }
 
   Future uploadPicture() async {
@@ -129,6 +130,12 @@ class _AddPetPageState extends State<AddPetPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the pet\'s name!';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                       labelText: 'Pet\'s Name',
                       labelStyle: GoogleFonts.inter(
@@ -185,6 +192,12 @@ class _AddPetPageState extends State<AddPetPage> {
                     const SizedBox(width: 16.0),
                     Expanded(
                       child: DropdownButtonFormField<String>(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a type!';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                             labelText: 'Type',
                             labelStyle: GoogleFonts.inter(
@@ -218,6 +231,12 @@ class _AddPetPageState extends State<AddPetPage> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the size!';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                             labelText: 'Size',
                             hintText: 'In centimeter (cm)',
@@ -233,8 +252,10 @@ class _AddPetPageState extends State<AddPetPage> {
                     const SizedBox(width: 16.0),
                     Expanded(
                       child: TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Age',
+                        decoration: InputDecoration(
+                          labelText: 'Age (optional)',
+                          labelStyle: GoogleFonts.inter(
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         onSaved: (value) {
                           age = value!;
@@ -245,8 +266,14 @@ class _AddPetPageState extends State<AddPetPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
                 child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some description!';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                       labelText: 'Describe your pet!',
                       labelStyle: GoogleFonts.inter(
@@ -257,157 +284,15 @@ class _AddPetPageState extends State<AddPetPage> {
                   },
                 ),
               ),
+              Text(
+                'Add some personality tags to your pet!',
+                style: GoogleFonts.inter(
+                    fontSize: 16, fontWeight: FontWeight.w500),
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: Autocomplete<String>(
-                  optionsViewBuilder: (context, onSelected, options) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 4.0),
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Material(
-                          elevation: 4.0,
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxHeight: 200),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: options.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final String option = options.elementAt(index);
-                                return TextButton(
-                                  onPressed: () {
-                                    onSelected(option);
-                                  },
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      '#$option',
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        color: Theme.of(context).colorScheme.tertiary,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  optionsBuilder: (TextEditingValue textEditingValue) {
-                    if (textEditingValue.text == '') {
-                      return const Iterable<String>.empty();
-                    }
-                    return _initialTags.where((String option) {
-                      return option
-                          .contains(textEditingValue.text.toLowerCase());
-                    });
-                  },
-                  onSelected: (String selectedTag) {
-                    _stringTagController.onTagSubmitted(selectedTag);
-                  },
-                  fieldViewBuilder: (context, textEditingController, focusNode,
-                      onFieldSubmitted) {
-                    return TextFieldTags<String>(
-                      textEditingController: textEditingController,
-                      focusNode: focusNode,
-                      textfieldTagsController: _stringTagController,
-                      initialTags: const [
-                        'Playful',
-                      ],
-                      textSeparators: const [' ', ','],
-                      letterCase: LetterCase.normal,
-                      validator: (String tag) {
-                        if (tag == 'php') {
-                          return 'No, please just no';
-                        } else if (_stringTagController.getTags!
-                            .contains(tag)) {
-                          return 'You\'ve already entered that';
-                        }
-                        return null;
-                      },
-                      inputFieldBuilder: (context, inputFieldValues) {
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                          child: TextField(
-                            controller: inputFieldValues.textEditingController,
-                            focusNode: inputFieldValues.focusNode,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              helperText: 'Add some personality tags to your pet!',
-                              helperStyle: GoogleFonts.inter(
-                                  fontSize: 16, fontWeight: FontWeight.w500),
-                              hintText: inputFieldValues.tags.isNotEmpty
-                                  ? ''
-                                  : "Enter tag...",
-                              hintStyle: const TextStyle(fontSize: 14),
-                              errorText: inputFieldValues.error,
-                              prefixIconConstraints: BoxConstraints(
-                                  maxWidth: _distanceToField * 0.74),
-                              prefixIcon: inputFieldValues.tags.isNotEmpty
-                                  ? SingleChildScrollView(
-                                      controller:
-                                          inputFieldValues.tagScrollController,
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                          children: inputFieldValues.tags
-                                              .map((String tag) {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                              Radius.circular(20.0),
-                                            ),
-                                            color: Theme.of(context).colorScheme.tertiary,
-                                          ),
-                                          margin: const EdgeInsets.only(
-                                              right: 5.0, bottom: 5.0),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10.0, vertical: 5.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              InkWell(
-                                                child: Text(
-                                                  '#$tag',
-                                                  style: const TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                                onTap: () {
-                                                  //print("$tag selected");
-                                                },
-                                              ),
-                                              const SizedBox(width: 4.0),
-                                              InkWell(
-                                                child: const Icon(
-                                                  Icons.cancel,
-                                                  size: 14.0,
-                                                  color: Color.fromARGB(
-                                                      255, 233, 233, 233),
-                                                ),
-                                                onTap: () {
-                                                  inputFieldValues
-                                                      .onTagRemoved(tag);
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      }).toList()),
-                                    )
-                                  : null,
-                            ),
-                            onChanged: inputFieldValues.onTagChanged,
-                            onSubmitted: inputFieldValues.onTagSubmitted,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                child: MultiSelectTagsDropDown(
+                    multiDropdownController: _multiDropdownController),
               ),
               const SizedBox(height: 16.0),
               Padding(
