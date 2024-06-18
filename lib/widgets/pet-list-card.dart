@@ -48,10 +48,12 @@ class _PetCardState extends State<PetCard> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Flexible(
-                flex: 1,
+              SizedBox(
+                height: 130,
+                width: 110,
                 child: Image.asset(
                   widget.animal.imageUrl,
+                  fit: BoxFit.cover,
                 ),
               ),
               const SizedBox(width: 8),

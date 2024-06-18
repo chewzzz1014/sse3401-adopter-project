@@ -22,7 +22,7 @@ class MultiSelectTagsDropDown extends StatelessWidget {
       selectedOptionIcon: const Icon(Icons.check_circle),
       inputDecoration:
           const BoxDecoration(border: Border(bottom: BorderSide(width: .7))),
-      selectedOptionTextColor: Theme.of(context).colorScheme.tertiary,
+      selectedOptionTextColor: Theme.of(context).colorScheme.primary,
     );
   }
 }
