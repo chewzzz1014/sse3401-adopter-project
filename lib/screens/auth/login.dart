@@ -5,6 +5,7 @@ import 'package:sse3401_adopter_project/constants.dart';
 import 'package:sse3401_adopter_project/services/alert_service.dart';
 import 'package:sse3401_adopter_project/services/auth_service.dart';
 import 'package:sse3401_adopter_project/services/navigation_service.dart';
+import 'package:sse3401_adopter_project/services/storage_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,17 +19,34 @@ class _LoginPageState extends State<LoginPage> {
   late AuthService _authService;
   late NavigationService _navigationService;
   late AlertService _alertService;
+  late StorageService _storageService;
 
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
+  String? iconImage;
 
   @override
   void initState() {
     super.initState();
+    _loadIconImage();
     _authService = _getIt.get<AuthService>();
     _navigationService = _getIt.get<NavigationService>();
     _alertService = _getIt.get<AlertService>();
+    _storageService = _getIt.get<StorageService>();
+  }
+
+  Future<void> _loadIconImage() async {
+    try {
+      String? iconImageURL = await _storageService.loadLogoImage();
+      if (iconImageURL!.isNotEmpty) {
+        setState(() {
+          iconImage = iconImageURL;
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   String? _validateEmail(String? value) {
@@ -74,9 +92,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildUI() {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login Page'),
-      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -85,6 +100,14 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Container(
+                  child: iconImage == null
+                      ? const CircularProgressIndicator()
+                      : Image.network(
+                          iconImage!,
+                          width: MediaQuery.of(context).size.width * 0.6,
+                        ),
+                ),
                 TextFormField(
                   decoration: const InputDecoration(
                     suffix: Text('Email'),
