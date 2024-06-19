@@ -40,17 +40,4 @@ class StorageService {
     );
   }
 
-  Future<String?> loadLogoImage() async {
-    String imagePath = 'app_logo.png';
-
-    try {
-      String downloadURL = await _firebaseStorage
-          .ref(imagePath)
-          .getDownloadURL();
-
-      return downloadURL;
-    } catch (e) {
-      print('Error retrieving image: $e');
-    }
-  }
 }

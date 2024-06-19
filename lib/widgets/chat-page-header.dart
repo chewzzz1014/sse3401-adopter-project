@@ -78,46 +78,43 @@ class _ChatPageHeaderState extends State<ChatPageHeader> {
                 ),
               ),
               GestureDetector(
-                onTap: () async {
-                  final result = showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Confirm Adoption Request'),
-                      content: const Text(
-                          'Are you sure you want to send a request to adopt Max?'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('Cancel'),
+                onTap: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Send Adoption Request?'),
+                    content: const Text(
+                        'Are you sure you want to send a request to adopt Max?'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async => {
+                          Navigator.pop(context, 'Yes'),
+                          await showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Adoption Request Sent!'),
+                              content: const Text(
+                                  'Your request to adopt Max has been sent successfully.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, 'OK'),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          )
+                        },
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(fontWeight: FontWeight.w600),
                         ),
-                        TextButton(
-                          onPressed: () async => {
-                            Navigator.pop(context, 'Yes'),
-                            await showDialog<String>(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Text('Request Sent'),
-                                content: const Text(
-                                    'Your request to adopt Max has been sent successfully.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'OK'),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            )
-                          },
-                          child: const Text(
-                            'Yes',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                      ),
+                    ],
+                  ),
+                ),
                 child: const Icon(
                   IconData(0xe4a1, fontFamily: 'MaterialIcons'),
                   color: Colors.black54,

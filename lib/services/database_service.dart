@@ -6,7 +6,6 @@ import 'package:sse3401_adopter_project/utils.dart';
 import '../models/animal.dart';
 import '../models/message.dart';
 import '../models/user_profile.dart';
-import '../models/chat.dart';
 import 'auth_service.dart';
 
 class DatabaseService {
@@ -89,8 +88,12 @@ class DatabaseService {
     return _chatsCollection?.doc(chatID).snapshots() as Stream<DocumentSnapshot<Chat>>;
   }
 
-  Future<DocumentSnapshot<UserProfile>> getCurrentUser(String uid) async {
-    final result = await _usersCollection?.doc(uid).get();
-    return result as DocumentSnapshot<UserProfile>;
+  getCurrentUserProfile() {
+    return _usersCollection?.doc(_authService.user!.uid).get();
   }
+
+  Future<void> updateUserProfile(String userId, UserProfile userProfile) async {
+    await _usersCollection?.doc(userId).update(userProfile.toJson());
+  }
+
 }

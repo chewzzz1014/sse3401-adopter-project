@@ -54,7 +54,7 @@ class _SignUpPageState extends State<SignUpPage> {
       isUploadedImageLoading = true;
     });
     try {
-      if (_formKey.currentState?.validate() ?? false && selectedImage != null) {
+      if (_formKey.currentState?.validate() ?? false) {
         _formKey.currentState?.save();
         bool result = await _authService.signup(_email!, _password!);
         if (result) {
@@ -152,7 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
           title: const Center(child: Text('Sign Up')),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20.0),
           child: Form(
             key: _formKey,
             child: Padding(
@@ -230,7 +230,16 @@ class _SignUpPageState extends State<SignUpPage> {
                     children: [
                       ElevatedButton(
                         onPressed: _submitForm,
-                        child: const Text('Sign Up'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -241,6 +250,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           style: TextStyle(
                             color: Colors.blue,
                             decoration: TextDecoration.underline,
+                            fontSize: 20
                           ),
                         ),
                       ),
