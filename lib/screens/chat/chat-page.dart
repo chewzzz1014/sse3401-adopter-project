@@ -4,7 +4,6 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:sse3401_adopter_project/services/database_service.dart';
 import 'package:sse3401_adopter_project/services/media_service.dart';
 import 'package:sse3401_adopter_project/services/storage_service.dart';

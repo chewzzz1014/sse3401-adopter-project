@@ -19,7 +19,6 @@ class _LoginPageState extends State<LoginPage> {
   late AuthService _authService;
   late NavigationService _navigationService;
   late AlertService _alertService;
-  late StorageService _storageService;
 
   final _formKey = GlobalKey<FormState>();
   String? email;
@@ -29,24 +28,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _loadIconImage();
     _authService = _getIt.get<AuthService>();
     _navigationService = _getIt.get<NavigationService>();
     _alertService = _getIt.get<AlertService>();
-    _storageService = _getIt.get<StorageService>();
-  }
-
-  Future<void> _loadIconImage() async {
-    try {
-      String? iconImageURL = await _storageService.loadLogoImage();
-      if (iconImageURL!.isNotEmpty) {
-        setState(() {
-          iconImage = iconImageURL;
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
   }
 
   String? _validateEmail(String? value) {
@@ -92,6 +76,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildUI() {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -100,14 +85,9 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  child: iconImage == null
-                      ? const CircularProgressIndicator()
-                      : Image.network(
-                          iconImage!,
-                          width: MediaQuery.of(context).size.width * 0.6,
-                        ),
-                ),
+                // Container(
+                //   child: Image.asset('logo_icon.png'),
+                // ),
                 TextFormField(
                   decoration: const InputDecoration(
                     suffix: Text('Email'),
@@ -134,7 +114,16 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: _login,
-                  child: const Text('Login'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16.0),
                 GestureDetector(
@@ -146,6 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       color: Colors.blue,
                       decoration: TextDecoration.underline,
+                      fontSize: 20,
                     ),
                   ),
                 ),

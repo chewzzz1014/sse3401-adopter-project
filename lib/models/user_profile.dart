@@ -13,6 +13,21 @@ class UserProfile {
     required this.age,
   });
 
+  UserProfile copyWith({
+    String? username,
+    String? pfpURL,
+    String? phoneNumber,
+    String? age,
+  }) {
+    return UserProfile(
+      uid: uid ?? this.uid,
+      username: username ?? this.username,
+      pfpURL: pfpURL ?? this.pfpURL,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      age: age ?? this.age,
+    );
+  }
+
   UserProfile.fromJson(Map<String, dynamic> json) {
     uid = json['uid'];
     username = json['username'];

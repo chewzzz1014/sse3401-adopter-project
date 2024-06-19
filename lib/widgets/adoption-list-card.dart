@@ -18,6 +18,42 @@ class AdoptionCard extends StatefulWidget {
   State<AdoptionCard> createState() => _AdoptionCardState();
 }
 
+void _approveRequest(BuildContext context) async {
+  Navigator.pop(context, 'Yes');
+  await showDialog<String>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('Request Sent'),
+      content: const Text(
+          'Your request to adopt Max has been sent successfully.'),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context, 'OK'),
+          child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
+
+void _rejectRequest(BuildContext context) async {
+  Navigator.pop(context, 'Yes');
+  await showDialog<String>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('Request Sent'),
+      content: const Text(
+          'Your request to adopt Max has been sent successfully.'),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context, 'OK'),
+          child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
+
 class _AdoptionCardState extends State<AdoptionCard> {
   @override
   Widget build(BuildContext context) {
@@ -53,29 +89,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
                   status,
                   style: TextStyle(color: getStatusColor(statusIdx)),
                 ),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: statusIdx == 0 ? () {
-                        // Implement approve logic
-                      } : null,
-                      child: const Text(
-                        'Approve', style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: statusIdx == 0 ? () {
-                        // Implement approve logic
-                      } : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,),
-                      child: const Text(
-                        'Reject', style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
+                _buildButtonUI(statusIdx),
               ],
             ),
           ],
@@ -100,5 +114,67 @@ class _AdoptionCardState extends State<AdoptionCard> {
             .colorScheme
             .tertiary;
     }
+  }
+
+  Widget _buildButtonUI(int statusIdx) {
+    return Row(
+      children: [
+        ElevatedButton(
+          onPressed: statusIdx == 0 ? () => showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Confirm Adoption Request'),
+              content: const Text(
+                  'Are you sure you want to send a request to adopt Max?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => _approveRequest(context),
+                  child: const Text(
+                    'Yes',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          ) : null,
+          child: const Text(
+            'Approve', style: TextStyle(color: Colors.black),
+          ),
+        ),
+        const SizedBox(width: 8),
+        ElevatedButton(
+          onPressed: statusIdx == 0 ? () => showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Confirm Adoption Request'),
+              content: const Text(
+                  'Are you sure you want to send a request to adopt Max?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => _rejectRequest(context),
+                  child: const Text(
+                    'Yes',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          ) : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,),
+          child: const Text(
+            'Reject', style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
+    );
   }
 }
