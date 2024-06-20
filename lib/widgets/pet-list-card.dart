@@ -52,7 +52,9 @@ class _PetCardState extends State<PetCard> {
                 height: 130,
                 width: 110,
                 child: Image.asset(
-                  widget.animal.imageUrl!,
+                  widget.animal.imageUrl!.isEmpty
+                      ? 'assets/images/userImage.jpg'
+                      : widget.animal.imageUrl!,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -93,8 +95,8 @@ class _PetCardState extends State<PetCard> {
                     ),
                     const SizedBox(height: 8),
                     Wrap(
-                      children: widget.animal.personality
-                          !.take(3)
+                      children: widget.animal.personality!
+                          .take(3)
                           .map((p) => PersonalityBadge(personality: p))
                           .toList(),
                     ),
