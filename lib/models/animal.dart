@@ -9,7 +9,7 @@ class Animal {
   int? age;
   String? description;
   List<String>? personality;
-  bool isAdopted = false;
+  bool? isAdopted;
 
   Animal({
     required this.ownerId,

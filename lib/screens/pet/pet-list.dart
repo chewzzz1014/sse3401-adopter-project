@@ -49,19 +49,6 @@ class _PetListPageState extends State<PetListPage> {
                 child: Container(
                   child: TabBarView(
                     children: [
-                      // SingleChildScrollView(
-                      // child: ListView.builder(
-                      //   itemCount: animalList.length,
-                      //   shrinkWrap: true,
-                      //   padding: const EdgeInsets.only(top: 16),
-                      //   physics: const NeverScrollableScrollPhysics(),
-                      //   itemBuilder: (context, index) {
-                      //     return PetCard(
-                      //       animal: animalList[index],
-                      //     );
-                      //   },
-                      // ),
-                      // ),
                       StreamBuilder(
                         stream: _databaseService.getAnimals(),
                         builder: (context, snapshot) {
@@ -92,19 +79,91 @@ class _PetListPageState extends State<PetListPage> {
                           );
                         },
                       ),
-
-                      SingleChildScrollView(
-                        child: ListView.builder(
-                          itemCount: adoptionRequestList.length,
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.only(top: 16),
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return AdoptionCard(
-                              adoptionRequest: adoptionRequestList[index],
-                            );
-                          },
-                        ),
+                      Column(
+                        children: [
+                          const Text(
+                            'Received',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          StreamBuilder(
+                            stream:
+                                _databaseService.getReceivedAdoptionRequests(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return const Center(
+                                    child: Text('Unable to load data.'));
+                              }
+                              print(snapshot.data);
+                              if (snapshot.hasData && snapshot.data != null) {
+                                final receivedRequests = snapshot.data!.docs;
+                                return SingleChildScrollView(
+                                  child: ListView.builder(
+                                    itemCount: receivedRequests.length,
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.only(top: 8),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      AdoptionRequest req =
+                                          receivedRequests[index].data();
+                                      return AdoptionCard(
+                                        adoptionRequest: req,
+                                        type: 'Received',
+                                      );
+                                    },
+                                  ),
+                                );
+                              }
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          ),
+                          const Text(
+                            'Sent',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          StreamBuilder(
+                            stream:
+                            _databaseService.getSentAdoptionRequests(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return const Center(
+                                    child: Text('Unable to load data.'));
+                              }
+                              print(snapshot.data);
+                              if (snapshot.hasData && snapshot.data != null) {
+                                final receivedRequests = snapshot.data!.docs;
+                                return SingleChildScrollView(
+                                  child: ListView.builder(
+                                    itemCount: receivedRequests.length,
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.only(top: 8),
+                                    physics:
+                                    const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      AdoptionRequest req =
+                                      receivedRequests[index].data();
+                                      return AdoptionCard(
+                                        adoptionRequest: req,
+                                        type: 'Sent',
+                                      );
+                                    },
+                                  ),
+                                );
+                              }
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
