@@ -4,11 +4,18 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 import 'package:sse3401_adopter_project/widgets/multi_select_tags_drop_down.dart';
 
 import '../constants.dart' as Constants;
+import '../services/alert_service.dart';
+import '../services/auth_service.dart';
+import '../services/database_service.dart';
+import '../services/media_service.dart';
+import '../services/navigation_service.dart';
+import '../services/storage_service.dart';
 
 enum Sex { Male, Female }
 
@@ -22,16 +29,24 @@ class AddPetPage extends StatefulWidget {
 }
 
 class _AddPetPageState extends State<AddPetPage> {
+  final GetIt _getIt = GetIt.instance;
+  late AuthService _authService;
+  late NavigationService _navigationService;
+  late AlertService _alertService;
+  late MediaService _mediaService;
+  late StorageService _storageService;
+  late DatabaseService _databaseService;
+
   final _formKey = GlobalKey<FormState>();
   bool _isFormValid = false;
 
-  String petName = '';
-  Sex sex = Sex.Male;
-  String type = '';
-  String size = '';
-  String age = '';
-  String description = '';
-  String tags = '';
+  String _petName = '';
+  Sex _sex = Sex.Male;
+  String _type = '';
+  String _size = '';
+  String _age = '';
+  String _description = '';
+  String _tags = '';
 
   final uid = auth.currentUser!.uid;
 
@@ -52,6 +67,12 @@ class _AddPetPageState extends State<AddPetPage> {
         value: tag,
       );
     }).toList());
+    _authService = _getIt.get<AuthService>();
+    _navigationService = _getIt.get<NavigationService>();
+    _alertService = _getIt.get<AlertService>();
+    _mediaService = _getIt.get<MediaService>();
+    _storageService = _getIt.get<StorageService>();
+    _databaseService = _getIt.get<DatabaseService>();
   }
 
   @override
@@ -96,7 +117,8 @@ class _AddPetPageState extends State<AddPetPage> {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState?.save(); // save each form
 
-      // TODO: Upload form to firebase
+
+
       Navigator.pop(context);
     } else {
       print("Form is invalid");
@@ -141,7 +163,7 @@ class _AddPetPageState extends State<AddPetPage> {
                       labelStyle: GoogleFonts.inter(
                           fontSize: 16, fontWeight: FontWeight.w500)),
                   onSaved: (value) {
-                    petName = value!;
+                    _petName = value!;
                   },
                 ),
               ),
@@ -161,10 +183,10 @@ class _AddPetPageState extends State<AddPetPage> {
                                   fontSize: 16, fontWeight: FontWeight.w500),
                             ),
                             value: Sex.Male,
-                            groupValue: sex,
+                            groupValue: _sex,
                             onChanged: (Sex? value) {
                               setState(() {
-                                sex = value!;
+                                _sex = value!;
                               });
                             },
                           ),
@@ -181,10 +203,10 @@ class _AddPetPageState extends State<AddPetPage> {
                                   fontSize: 16, fontWeight: FontWeight.w500),
                             ),
                             value: Sex.Female,
-                            groupValue: sex,
+                            groupValue: _sex,
                             onChanged: (Sex? value) {
                               setState(() {
-                                sex = value!;
+                                _sex = value!;
                               });
                             },
                           ),
@@ -217,7 +239,7 @@ class _AddPetPageState extends State<AddPetPage> {
                         }).toList(),
                         onChanged: (value) {
                           setState(() {
-                            type = value!;
+                            _type = value!;
                           });
                         },
                       ),
@@ -231,12 +253,6 @@ class _AddPetPageState extends State<AddPetPage> {
                   children: [
                     Expanded(
                       child: TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the size!';
-                          }
-                          return null;
-                        },
                         decoration: InputDecoration(
                             labelText: 'Size',
                             hintText: 'In centimeter (cm)',
@@ -245,20 +261,26 @@ class _AddPetPageState extends State<AddPetPage> {
                             hintStyle: GoogleFonts.inter(
                                 fontSize: 16, fontWeight: FontWeight.w500)),
                         onSaved: (value) {
-                          size = value!;
+                          _size = value!;
                         },
                       ),
                     ),
                     const SizedBox(width: 16.0),
                     Expanded(
                       child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the size!';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           labelText: 'Age (optional)',
                           labelStyle: GoogleFonts.inter(
                               fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         onSaved: (value) {
-                          age = value!;
+                          _age = value!;
                         },
                       ),
                     ),
@@ -280,7 +302,7 @@ class _AddPetPageState extends State<AddPetPage> {
                           fontSize: 16, fontWeight: FontWeight.w500)),
                   maxLines: 3,
                   onSaved: (value) {
-                    description = value!;
+                    _description = value!;
                   },
                 ),
               ),

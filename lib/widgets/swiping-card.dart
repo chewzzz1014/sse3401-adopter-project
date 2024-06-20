@@ -34,7 +34,7 @@ class AnimalCard extends StatelessWidget {
             flex: 2,
             child: Container(
               decoration: BoxDecoration(
-                image: DecorationImage(image: AssetImage(animal.imageUrl), fit: BoxFit.cover,),
+                image: DecorationImage(image: AssetImage(animal.imageUrl!), fit: BoxFit.cover,),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
@@ -59,7 +59,7 @@ class AnimalCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      animal.name,
+                      animal.name!,
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -70,7 +70,7 @@ class AnimalCard extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      animal.gender,
+                      animal.gender!,
                       style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 15,

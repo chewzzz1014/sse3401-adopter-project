@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/models/chat.dart';
 import 'package:sse3401_adopter_project/utils.dart';
 
+import '../models/animal.dart';
 import '../models/message.dart';
 import '../models/user_profile.dart';
 import 'auth_service.dart';
@@ -14,6 +15,7 @@ class DatabaseService {
 
   CollectionReference? _usersCollection;
   CollectionReference? _chatsCollection;
+  CollectionReference? _animalsCollection;
 
   DatabaseService() {
     _authService = _getIt.get<AuthService>();
@@ -37,6 +39,10 @@ class DatabaseService {
 
   Future<void> createUserProfile({required UserProfile userProfile}) async {
     await _usersCollection?.doc(userProfile.uid).set(userProfile);
+  }
+
+  Future<void> createAnimalProfile({required Animal animal}) async {
+    await _animalsCollection?.doc(animal.id).set(animal);
   }
 
   Stream<QuerySnapshot<UserProfile>> getUserProfiles() {

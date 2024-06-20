@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/mockData/mock-pet.dart';
-import 'package:sse3401_adopter_project/widgets/multi_select_tags_drop_down.dart';
-import 'package:sse3401_adopter_project/constants.dart' as Constants;
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:sse3401_adopter_project/widgets/swiping-card.dart';
+import 'package:filter_list/filter_list.dart';
 
 import '../models/animal.dart';
+import '../services/database_service.dart';
+import '../services/navigation_service.dart';
 import '../widgets/swiping-buttons.dart';
+import '../services/storage_service.dart';
 
 class SwipeAnimalPage extends StatefulWidget {
   const SwipeAnimalPage({super.key});
@@ -18,34 +20,88 @@ class SwipeAnimalPage extends StatefulWidget {
 
 class _SwipeAnimalPageState extends State<SwipeAnimalPage>
     with TickerProviderStateMixin {
+  final GetIt _getIt = GetIt.instance;
+  late DatabaseService _databaseService;
+  late NavigationService _navigationService;
+  late StorageService _storageService;
+
   late List<Animal> petsFiltered = animalList;
 
-  final MultiSelectController _multiDropdownController =
-      MultiSelectController();
   final AppinioSwiperController controller = AppinioSwiperController();
 
-  static const List<String> _initialTags = Constants.personalityTags;
+  // static const List<Animal> _animalData =
 
   @override
   void initState() {
     super.initState();
-    _multiDropdownController.setOptions(_initialTags.map((tag) {
-      return ValueItem<String>(
-        label: tag,
-        value: tag,
-      );
-    }).toList());
+    _databaseService = _getIt.get<DatabaseService>();
+    _navigationService = _getIt.get<NavigationService>();
+    _storageService = _getIt.get<StorageService>();
   }
 
   @override
   void didChangeDependencies() async {
+
     super.didChangeDependencies();
 
     if (petsFiltered.isNotEmpty) {
       for (var pet in petsFiltered) {
-        await precacheImage(AssetImage(pet.imageUrl), context);
+        await precacheImage(AssetImage(pet.imageUrl!), context);
       }
     }
+  }
+
+  Future<void> _openFilterDialog() async {
+  //   await FilterListDialog.display<User>(
+  //     context,
+  //     hideSelectedTextCount: true,
+  //     themeData: FilterListThemeData(
+  //       context,
+  //       choiceChipTheme: ChoiceChipThemeData.light(context),
+  //     ),
+  //     headlineText: 'Select Users',
+  //     height: 500,
+  //     listData: userList,
+  //     selectedListData: selectedUserList,
+  //     choiceChipLabel: (item) => item!.name,
+  //     validateSelectedItem: (list, val) => list!.contains(val),
+  //     controlButtons: [ControlButtonType.All, ControlButtonType.Reset],
+  //     onItemSearch: (user, query) {
+  //       /// When search query change in search bar then this method will be called
+  //       ///
+  //       /// Check if items contains query
+  //       return user.name!.toLowerCase().contains(query.toLowerCase());
+  //     },
+  //
+  //     onApplyButtonClick: (list) {
+  //       setState(() {
+  //         selectedUserList = List.from(list!);
+  //       });
+  //       Navigator.pop(context);
+  //     },
+  //     onCloseWidgetPress: () {
+  //       // Do anything with the close button.
+  //       //print("hello");
+  //       Navigator.pop(context, null);
+  //     },
+  //
+  //     /// uncomment below code to create custom choice chip
+  //     /* choiceChipBuilder: (context, item, isSelected) {
+  //       return Container(
+  //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+  //         decoration: BoxDecoration(
+  //             border: Border.all(
+  //           color: isSelected! ? Colors.blue[300]! : Colors.grey[300]!,
+  //         )),
+  //         child: Text(
+  //           item.name,
+  //           style: TextStyle(
+  //               color: isSelected ? Colors.blue[300] : Colors.grey[500]),
+  //         ),
+  //       );
+  //     }, */
+  //   );
   }
 
   @override
@@ -55,24 +111,20 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
         width: MediaQuery.of(context).size.width * 0.8,
         child: Column(
           children: [
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                "Filter the list:",
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: MultiSelectTagsDropDown(
-                multiDropdownController: _multiDropdownController,
+              child: TextButton(
+                child: const Text("Filter the list:"),
+                onPressed: () {
+                  _openFilterDialog;
+                },
               ),
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.5,
               child: FutureBuilder(
                 future: Future.wait(petsFiltered.map(
-                    (pet) => precacheImage(AssetImage(pet.imageUrl), context))),
+                    (pet) => precacheImage(AssetImage(pet.imageUrl!), context))),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return AppinioSwiper(
@@ -92,7 +144,7 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
                       },
                     );
                   } else {
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   }
                 },
               ),

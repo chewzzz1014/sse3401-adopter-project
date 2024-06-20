@@ -5,6 +5,7 @@ final Uuid uuid = Uuid();
 
 List<Animal> animalList = [
   Animal(
+    ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
     id: uuid.v4(),
     imageUrl: 'assets/images/dog-1.jpg',
     name: 'Max',
@@ -16,6 +17,7 @@ List<Animal> animalList = [
     personality: ['Playful'],
   ),
   Animal(
+    ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
     id: uuid.v4(),
     imageUrl: 'assets/images/cat-1.jpg',
     name: 'Bella',
@@ -27,6 +29,7 @@ List<Animal> animalList = [
     personality: ['Curious', 'Independent', 'Quiet'],
   ),
   Animal(
+    ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
     id: uuid.v4(),
     imageUrl: 'assets/images/rabbit-1.jpg',
     name: 'Charlie',
@@ -38,6 +41,7 @@ List<Animal> animalList = [
     personality: ['Gentle', 'Cuddly', 'Quiet'],
   ),
   Animal(
+    ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
     id: uuid.v4(),
     imageUrl: 'assets/images/bird-1.jpg',
     name: 'Lucy',
@@ -49,6 +53,7 @@ List<Animal> animalList = [
     personality: ['Talkative', 'Vibrant', 'Intelligent'],
   ),
   Animal(
+    ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
     id: uuid.v4(),
     imageUrl: 'assets/images/dog-2.jpg',
     name: 'Max',
@@ -60,6 +65,7 @@ List<Animal> animalList = [
     personality: ['Playful', 'Loyal', 'Friendly'],
   ),
   Animal(
+    ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
     id: uuid.v4(),
     imageUrl: 'assets/images/cat-2.jpg',
     name: 'Bella',
@@ -71,6 +77,7 @@ List<Animal> animalList = [
     personality: ['Curious', 'Independent', 'Quiet'],
   ),
   Animal(
+    ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
     id: uuid.v4(),
     imageUrl: 'assets/images/dog-3.jpg',
     name: 'Max',
@@ -82,6 +89,7 @@ List<Animal> animalList = [
     personality: ['Playful', 'Loyal', 'Friendly'],
   ),
   Animal(
+    ownerId: 'qR9a2OnCXoWCiOqHB67uDrZ2byB3',
     id: uuid.v4(),
     imageUrl: 'assets/images/cat-3.jpg',
     name: 'Bella',
