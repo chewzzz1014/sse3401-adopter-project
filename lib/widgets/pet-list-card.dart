@@ -52,7 +52,7 @@ class _PetCardState extends State<PetCard> {
                 height: 130,
                 width: 110,
                 child: Image.asset(
-                  widget.animal.imageUrl,
+                  widget.animal.imageUrl!,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -67,7 +67,7 @@ class _PetCardState extends State<PetCard> {
                       children: [
                         Flexible(
                           child: Text(
-                            widget.animal.name,
+                            widget.animal.name!,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -83,7 +83,7 @@ class _PetCardState extends State<PetCard> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      widget.animal.description,
+                      widget.animal.description!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -94,7 +94,7 @@ class _PetCardState extends State<PetCard> {
                     const SizedBox(height: 8),
                     Wrap(
                       children: widget.animal.personality
-                          .take(3)
+                          !.take(3)
                           .map((p) => PersonalityBadge(personality: p))
                           .toList(),
                     ),
