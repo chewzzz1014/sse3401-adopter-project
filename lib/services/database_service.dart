@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sse3401_adopter_project/models/animal-adoption-request.dart';
 import 'package:sse3401_adopter_project/models/chat.dart';
 import 'package:sse3401_adopter_project/utils.dart';
 
@@ -16,6 +17,7 @@ class DatabaseService {
   CollectionReference? _usersCollection;
   CollectionReference? _chatsCollection;
   CollectionReference? _animalsCollection;
+  CollectionReference? _adoptionRequestsCollection;
 
   DatabaseService() {
     _authService = _getIt.get<AuthService>();
@@ -40,6 +42,12 @@ class DatabaseService {
         _firebaseFirestore.collection("animals").withConverter<Animal>(
           fromFirestore: (snapshot, _) => Animal.fromJson(snapshot.data()!),
           toFirestore: (animal, _) => animal.toJson(),
+        );
+
+    _adoptionRequestsCollection =
+        _firebaseFirestore.collection("adoptionReqs").withConverter<AdoptionRequest>(
+          fromFirestore: (snapshot, _) => AdoptionRequest.fromJson(snapshot.data()!),
+          toFirestore: (req, _) => req.toJson(),
         );
   }
 
@@ -108,6 +116,27 @@ class DatabaseService {
 
   Future<void> updateUserProfile(String userId, UserProfile userProfile) async {
     await _usersCollection?.doc(userId).update(userProfile.toJson());
+  }
+
+  // for adoption request
+  getAnimalById(String petId) {
+    return _animalsCollection?.doc(petId).get();
+  }
+
+  getUserById(String id) {
+    return _usersCollection?.doc(id).get();
+  }
+
+  Stream<QuerySnapshot<AdoptionRequest>> getReceivedAdoptionRequests() {
+    return _adoptionRequestsCollection
+        ?.where("receiverId", isEqualTo: _authService.user?.uid)
+        .snapshots() as Stream<QuerySnapshot<AdoptionRequest>>;
+  }
+
+  Stream<QuerySnapshot<AdoptionRequest>> getSentAdoptionRequests() {
+    return _adoptionRequestsCollection
+        ?.where("senderId", isEqualTo: _authService.user?.uid)
+        .snapshots() as Stream<QuerySnapshot<AdoptionRequest>>;
   }
 
 }
