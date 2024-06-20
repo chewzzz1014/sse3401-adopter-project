@@ -9,6 +9,7 @@ class Animal {
   int? age;
   String? description;
   List<String>? personality;
+  bool isAdopted = false;
 
   Animal({
     required this.ownerId,
@@ -21,33 +22,35 @@ class Animal {
     required this.age,
     required this.description,
     required this.personality,
+    required this.isAdopted,
   });
 
   Animal.fromJson(Map<String, dynamic> json) {
     ownerId = json['ownerId'];
     id = json['id'];
-    imageUrl = json['imageUrl'];
+    imageUrl = json['imageUrl'] ?? '';
     name = json['name'];
     gender = json['gender'];
     type = json['type'];
     size = json['size'];
     age = json['age'];
     description = json['description'];
-    personality = json['personality'];
+    personality = List<String>.from(json['personality']);
+    isAdopted = json['isAdopted'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'];
-    data['imageUrl'];
-    data['name'];
-    data['gender'];
-    data['type'];
-    data['size'];
-    data['age'];
-    data['description'];
-    data['personality'];
-
+    data['id'] = id;
+    data['imageUrl'] = imageUrl ?? '';
+    data['name'] = name;
+    data['gender'] = gender;
+    data['type'] = type;
+    data['size'] = size;
+    data['age'] = age;
+    data['description'] = description;
+    data['personality'] = personality;
+    data['isAdopted'] = isAdopted;
     return data;
   }
 }

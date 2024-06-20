@@ -23,12 +23,6 @@ class ChatListPage extends StatefulWidget {
   State<ChatListPage> createState() => _ChatListPageState();
 }
 
-String randomString() {
-  final random = Random.secure();
-  final values = List<int>.generate(16, (i) => random.nextInt(255));
-  return base64UrlEncode(values);
-}
-
 class _ChatListPageState extends State<ChatListPage> {
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;

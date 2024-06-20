@@ -35,6 +35,12 @@ class DatabaseService {
               fromFirestore: (snapshot, _) => Chat.fromJson(snapshot.data()!),
               toFirestore: (chat, _) => chat.toJson(),
             );
+
+    _animalsCollection =
+        _firebaseFirestore.collection("animals").withConverter<Animal>(
+          fromFirestore: (snapshot, _) => Animal.fromJson(snapshot.data()!),
+          toFirestore: (animal, _) => animal.toJson(),
+        );
   }
 
   Future<void> createUserProfile({required UserProfile userProfile}) async {
@@ -51,6 +57,13 @@ class DatabaseService {
         .snapshots() as Stream<QuerySnapshot<UserProfile>>;
   }
 
+  Stream<QuerySnapshot<Animal>> getAnimals() {
+    return _animalsCollection
+        ?.where("isAdopted", isEqualTo: false)
+        .snapshots() as Stream<QuerySnapshot<Animal>>;
+  }
+
+  // for chat feature
   Future<bool> checkChatExists(String uid1, String uid2) async {
     String chatID = generateChatID(uid1: uid1, uid2: uid2);
     final result = await _chatsCollection?.doc(chatID).get();
@@ -88,6 +101,7 @@ class DatabaseService {
     return _chatsCollection?.doc(chatID).snapshots() as Stream<DocumentSnapshot<Chat>>;
   }
 
+  // get and update current user's profile
   getCurrentUserProfile() {
     return _usersCollection?.doc(_authService.user!.uid).get();
   }
