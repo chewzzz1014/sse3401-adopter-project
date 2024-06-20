@@ -9,21 +9,22 @@ final Uuid uuid = Uuid();
 final Random random = Random();
 
 class AdoptionRequest {
-  String requestId;
   String petId;
-  String userId;
+  String receiverId;
+  String senderId;
   DateTime timestamp;
   int status; // 0 for pending; 1 for rejected and 2 for approve
 
   AdoptionRequest({
-    required this.requestId,
     required this.petId,
-    required this.userId,
+    required this.receiverId,
+    required this.senderId,
     required this.timestamp,
     required this.status,
   });
 }
 
+// TODO: delete this after done setup firebase
 List<AdoptionRequest> generateAdoptionRequests() {
   List<AdoptionRequest> requests = [];
 
@@ -41,7 +42,8 @@ List<AdoptionRequest> generateAdoptionRequests() {
     AdoptionRequest request = AdoptionRequest(
       requestId: requestId,
       petId: petId,
-      userId: userId,
+      receiverId: userId,
+      senderId: userId,
       timestamp: requestDate,
       status: status,
     );

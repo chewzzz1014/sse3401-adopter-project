@@ -58,7 +58,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
   @override
   Widget build(BuildContext context) {
     Animal? animal = getAnimalById(widget.adoptionRequest.petId);
-    ChatUsers user = getChatUsersById(widget.adoptionRequest.userId);
+    ChatUsers user = getChatUsersById(widget.adoptionRequest.senderId);
     String formattedDateTime = DateFormat('dd/MM/yyyy hh:mm a')
         .format(widget.adoptionRequest.timestamp);
     List<String> statusList = ['Pending', 'Rejected', 'Approved'];
@@ -123,9 +123,9 @@ class _AdoptionCardState extends State<AdoptionCard> {
           onPressed: statusIdx == 0 ? () => showDialog<String>(
             context: context,
             builder: (BuildContext context) => AlertDialog(
-              title: const Text('Confirm Adoption Request'),
+              title: const Text('Approve Adoption Request?'),
               content: const Text(
-                  'Are you sure you want to send a request to adopt Max?'),
+                  'Are you sure you want to approve [username] to adopt [pet name]?'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -150,9 +150,9 @@ class _AdoptionCardState extends State<AdoptionCard> {
           onPressed: statusIdx == 0 ? () => showDialog<String>(
             context: context,
             builder: (BuildContext context) => AlertDialog(
-              title: const Text('Confirm Adoption Request'),
+              title: const Text('Reject Adoption Request?'),
               content: const Text(
-                  'Are you sure you want to send a request to adopt Max?'),
+                  'Are you sure you want to send a reject [username] to adopt [pet name]?'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.pop(context, 'Cancel'),
