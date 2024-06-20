@@ -85,9 +85,10 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Container(
-                //   child: Image.asset('logo_icon.png'),
-                // ),
+                Image(
+                  image: const AssetImage('assets/images/logo_icon.png'),
+                  width: MediaQuery.of(context).size.width * 0.6,
+                ),
                 TextFormField(
                   decoration: const InputDecoration(
                     suffix: Text('Email'),
