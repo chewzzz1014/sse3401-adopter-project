@@ -40,7 +40,6 @@ List<AdoptionRequest> generateAdoptionRequests() {
     int status = random.nextInt(3);
 
     AdoptionRequest request = AdoptionRequest(
-      requestId: requestId,
       petId: petId,
       receiverId: userId,
       senderId: userId,

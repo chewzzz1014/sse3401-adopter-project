@@ -15,6 +15,7 @@ List<Animal> animalList = [
     age: 3,
     description: 'Max is a friendly and energetic dog who loves to play fetch and go on long walks. He is very loyal to his owners and gets along well with other pets. Max is always ready for an adventure and loves to meet new people.',
     personality: ['Playful'],
+    isAdopted: false,
   ),
   Animal(
     ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
@@ -27,6 +28,7 @@ List<Animal> animalList = [
     age: 2,
     description: 'Bella is a curious and independent cat who enjoys exploring her surroundings. She is quite the observer and loves to perch herself in high places to watch over everything. Bella is also very affectionate and enjoys quiet moments with her human friends.',
     personality: ['Curious', 'Independent', 'Quiet'],
+    isAdopted: false,
   ),
   Animal(
     ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
@@ -39,6 +41,7 @@ List<Animal> animalList = [
     age: 1,
     description: 'Charlie is a gentle and cuddly rabbit who loves to be held and petted. He enjoys munching on fresh vegetables and hopping around the garden. Charlie is very calm and quiet, making him a perfect companion for a peaceful home.',
     personality: ['Gentle', 'Cuddly', 'Quiet'],
+    isAdopted: false,
   ),
   Animal(
     ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
@@ -51,6 +54,7 @@ List<Animal> animalList = [
     age: 4,
     description: 'Lucy is a vibrant and talkative parrot who loves to interact with people. She enjoys mimicking sounds and having conversations. Lucy is very intelligent and can learn new tricks quickly. She brings a lot of joy and color to her surroundings.',
     personality: ['Talkative', 'Vibrant', 'Intelligent'],
+    isAdopted: false,
   ),
   Animal(
     ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
@@ -63,6 +67,7 @@ List<Animal> animalList = [
     age: 3,
     description: 'Max is a friendly and energetic dog who loves to play fetch and go on long walks. He is very loyal to his owners and gets along well with other pets. Max is always ready for an adventure and loves to meet new people.',
     personality: ['Playful', 'Loyal', 'Friendly'],
+    isAdopted: false,
   ),
   Animal(
     ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
@@ -75,6 +80,7 @@ List<Animal> animalList = [
     age: 2,
     description: 'Bella is a curious and independent cat who enjoys exploring her surroundings. She is quite the observer and loves to perch herself in high places to watch over everything. Bella is also very affectionate and enjoys quiet moments with her human friends.',
     personality: ['Curious', 'Independent', 'Quiet'],
+    isAdopted: false,
   ),
   Animal(
     ownerId: 'A2f0BNbeIrRXlqEDoM6uvp15kXv2',
@@ -87,6 +93,7 @@ List<Animal> animalList = [
     age: 3,
     description: 'Max is a friendly and energetic dog who loves to play fetch and go on long walks. He is very loyal to his owners and gets along well with other pets. Max is always ready for an adventure and loves to meet new people.',
     personality: ['Playful', 'Loyal', 'Friendly'],
+    isAdopted: false,
   ),
   Animal(
     ownerId: 'qR9a2OnCXoWCiOqHB67uDrZ2byB3',
@@ -99,6 +106,7 @@ List<Animal> animalList = [
     age: 2,
     description: 'Bella is a curious and independent cat who enjoys exploring her surroundings. She is quite the observer and loves to perch herself in high places to watch over everything. Bella is also very affectionate and enjoys quiet moments with her human friends.',
     personality: ['Curious', 'Independent', 'Quiet', 'Lovely', 'Cute'],
+    isAdopted: false,
   ),
 ];
 
