@@ -9,12 +9,9 @@ import 'package:sse3401_adopter_project/screens/chat/chat-page.dart';
 import 'package:sse3401_adopter_project/services/database_service.dart';
 import 'package:sse3401_adopter_project/widgets/chat-search-bar.dart';
 
-import '../../mockData/mock-user.dart';
-import '../../models/chat-user-model.dart';
 import '../../services/auth_service.dart';
 import '../../services/navigation_service.dart';
 import '../../widgets/conversation-list.dart';
-import 'package:uuid/uuid.dart';
 
 class ChatListPage extends StatefulWidget {
   const ChatListPage({super.key});
