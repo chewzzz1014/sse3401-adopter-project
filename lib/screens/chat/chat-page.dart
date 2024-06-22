@@ -59,6 +59,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: ChatPageHeader(
         name: widget.chatUser.username!,
         imageUrl: widget.chatUser.pfpURL!,
+        chatWithId: widget.chatUser.uid!,
       ),
       body: StreamBuilder(
           stream: _databaseService.getChatData(currentUser!.id, otherUser!.id),
