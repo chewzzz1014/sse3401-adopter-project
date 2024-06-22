@@ -139,4 +139,18 @@ class DatabaseService {
         .snapshots() as Stream<QuerySnapshot<AdoptionRequest>>;
   }
 
+  Future<void> updateAnimalAdoptedStatus(String animalId) async {
+    final docRef = _animalsCollection!.doc(animalId);
+    await docRef.update({
+      "isAdopted": true,
+    });
+  }
+
+  Future<void> updateAdoptionRequestStatus(String reqId, int newStatus) async {
+    final docRef = _adoptionRequestsCollection!.doc(reqId);
+    await docRef.update({
+      "status": newStatus,
+    });
+  }
+
 }

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:sse3401_adopter_project/mockData/mock-pet.dart';
-import 'package:sse3401_adopter_project/mockData/mock-user.dart';
-import 'package:sse3401_adopter_project/models/animal-adoption-request.dart';
-import 'package:sse3401_adopter_project/models/chat-user-model.dart';
 import 'package:intl/intl.dart';
+import 'package:sse3401_adopter_project/models/animal-adoption-request.dart';
 import 'package:sse3401_adopter_project/models/user_profile.dart';
 import '../models/animal.dart';
+import '../screens/chat/chat-page.dart';
 import '../services/alert_service.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
+import '../services/navigation_service.dart';
 
 class AdoptionCard extends StatefulWidget {
   AdoptionRequest adoptionRequest;
@@ -30,9 +29,12 @@ class _AdoptionCardState extends State<AdoptionCard> {
   late DatabaseService _databaseService;
   late AuthService _authService;
   late AlertService _alertService;
+  late NavigationService _navigationService;
 
   Animal? _animal;
   UserProfile? _user;
+  int? _adoptionRequestStatus;
+  String? formattedSentAt;
 
   @override
   void initState() {
@@ -40,11 +42,10 @@ class _AdoptionCardState extends State<AdoptionCard> {
     _databaseService = _getIt.get<DatabaseService>();
     _authService = _getIt.get<AuthService>();
     _alertService = _getIt.get<AlertService>();
+    _navigationService = _getIt.get<NavigationService>();
 
     _fetchAnimal();
-    if(widget.adoptionRequest.receiverId == _authService.user?.uid) {
-      _fetchUser();
-    }
+    _fetchUser();
   }
 
   Future<void> _fetchAnimal() async {
@@ -52,6 +53,9 @@ class _AdoptionCardState extends State<AdoptionCard> {
     if (doc.exists) {
       setState(() {
         _animal = doc.data()!;
+        _adoptionRequestStatus = widget.adoptionRequest.status;
+        DateTime sentAt = DateTime.parse(widget.adoptionRequest.sentAt!.toDate().toString());
+        formattedSentAt = DateFormat('dd/mm/yyyy kk:mm').format(sentAt);
       });
     }
   }
@@ -84,7 +88,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${_user?.username} have requested to adopt ${_animal?.name} on ${widget.adoptionRequest.sentAt}',
+              '${_user?.username} have requested to adopt ${_animal?.name} on $formattedSentAt',
             ),
             const SizedBox(height: 8),
             Row(
@@ -95,7 +99,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
                   style: TextStyle(color: getStatusColor(widget.adoptionRequest.status!)),
                 ),
                 if(widget.adoptionRequest.status! == 0)
-                  _buildButtonUI(),
+                  _buildReceivedButtonUI(),
               ],
             ),
           ],
@@ -118,7 +122,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'You have requested to adopt ${_animal?.name} on ${widget.adoptionRequest.sentAt}',
+              'You have requested to adopt ${_animal?.name} on $formattedSentAt',
             ),
             const SizedBox(height: 8),
             Row(
@@ -128,6 +132,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
                   getStatusText(widget.adoptionRequest.status!),
                   style: TextStyle(color: getStatusColor(widget.adoptionRequest.status!)),
                 ),
+                _buildSentButtonUI(),
               ],
             ),
           ],
@@ -160,16 +165,18 @@ class _AdoptionCardState extends State<AdoptionCard> {
     }
   }
 
-  Widget _buildButtonUI() {
+  Widget _buildReceivedButtonUI() {
+    // TODO: no button/deactivate button if status is 1 or 2
+
     return Row(
       children: [
         ElevatedButton(
           onPressed: () => showDialog<String>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Approve Adoption Request?'),
+                      title: const Text('Approve Adoption Request? 🤩'),
                       content: Text(
-                          'Do you want ${_user?.username} to become ${_animal?.name}\' new owner? 🤩'),
+                          'Do you want ${_user?.username} to become ${_animal?.name}\'s new owner?'),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -185,9 +192,12 @@ class _AdoptionCardState extends State<AdoptionCard> {
                       ],
                     ),
                   ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+          ),
           child: const Text(
             'Approve',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
         ),
         const SizedBox(width: 8),
@@ -195,9 +205,9 @@ class _AdoptionCardState extends State<AdoptionCard> {
           onPressed: () => showDialog<String>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Reject Adoption Request?'),
+                      title: const Text('Reject Adoption Request? 😭'),
                       content: Text(
-                          'Are you sure you want to reject ${_user?.username} from adopt ${_animal?.name}? 😭'),
+                          'Are you sure you want to reject ${_user?.username} from adopt ${_animal?.name}?'),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -225,25 +235,92 @@ class _AdoptionCardState extends State<AdoptionCard> {
     );
   }
 
+  Widget _buildSentButtonUI() {
+    return Row(
+      children: [
+        ElevatedButton(
+          onPressed: () async {
+            final chatExists =
+            await _databaseService.checkChatExists(
+              _authService.user!.uid,
+              widget.adoptionRequest.receiverId!,
+            );
+            print(chatExists);
+            if (!chatExists) {
+              await _databaseService.createNewChat(
+                _authService.user!.uid,
+                widget.adoptionRequest.receiverId!,
+              );
+            }
+            final result = await _databaseService.getUserById(widget.adoptionRequest.receiverId!);
+            if(result.exists) {
+              UserProfile chatWith = result.data();
+
+              _navigationService.push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ChatPage(chatUser: chatWith);
+                  },
+                ),
+              );
+            } else {
+              _alertService.showToast(
+                text: 'User not available',
+                icon: Icons.error,
+              );
+            }
+          },
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(width: 0.8, color: Colors.grey),
+          ),
+          child: const Text(
+            'Chat',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        const SizedBox(width: 8),
+        ElevatedButton(
+          onPressed: () {
+            // TODO: direct to animal details page
+          },
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(width: 0.8, color: Colors.grey),
+          ),
+          child: Text(
+            'View ${_animal?.name}',
+            style: const TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    );
+  }
+
   void _approveRequest(BuildContext context) async {
     Navigator.pop(context, 'Yes');
 
-    // TODO: update db
+    await _databaseService.updateAnimalAdoptedStatus(widget.adoptionRequest.petId!);
+    await _databaseService.updateAdoptionRequestStatus(widget.adoptionRequest.id!, 2);
 
     _alertService.showToast(
       text: 'Adoption Request Approved!',
       icon: Icons.check,
     );
+    setState(() {
+      _adoptionRequestStatus = widget.adoptionRequest.status;
+    });
   }
 
   void _rejectRequest(BuildContext context) async {
     Navigator.pop(context, 'Yes');
 
-    // TODO: update db
+    await _databaseService.updateAdoptionRequestStatus(widget.adoptionRequest.id!, 1);
 
     _alertService.showToast(
       text: 'Adoption Request Rejected!',
       icon: Icons.check,
     );
+    setState(() {
+      _adoptionRequestStatus = widget.adoptionRequest.status;
+    });
   }
 }
