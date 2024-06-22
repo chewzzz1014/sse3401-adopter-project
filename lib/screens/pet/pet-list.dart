@@ -21,8 +21,6 @@ class _PetListPageState extends State<PetListPage> {
   late AuthService _authService;
   late DatabaseService _databaseService;
 
-  List<AdoptionRequest> adoptionRequestList = generateAdoptionRequests();
-
   @override
   void initState() {
     super.initState();

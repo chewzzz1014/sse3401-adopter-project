@@ -53,13 +53,13 @@ class _ConversationListState extends State<ConversationList> {
                           const SizedBox(
                             height: 6,
                           ),
-                          Text(
-                            'Test message',
-                            style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey.shade600,
-                                fontWeight: FontWeight.normal),
-                          ),
+                          // Text(
+                          //   'Test message',
+                          //   style: TextStyle(
+                          //       fontSize: 13,
+                          //       color: Colors.grey.shade600,
+                          //       fontWeight: FontWeight.normal),
+                          // ),
                         ],
                       ),
                     ),
@@ -67,13 +67,13 @@ class _ConversationListState extends State<ConversationList> {
                 ],
               ),
             ),
-            const Text(
-              'Today',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
+            // const Text(
+            //   'Today',
+            //   style: TextStyle(
+            //     fontSize: 12,
+            //     fontWeight: FontWeight.normal,
+            //   ),
+            // ),
           ],
         ),
       ),
