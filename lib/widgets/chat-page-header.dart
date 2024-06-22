@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sse3401_adopter_project/widgets/adoption_req_btn.dart';
 
 import '../constants.dart';
 import '../services/auth_service.dart';
@@ -8,10 +9,12 @@ import '../services/navigation_service.dart';
 class ChatPageHeader extends StatefulWidget implements PreferredSizeWidget {
   String name;
   String imageUrl;
+  String chatWithId;
 
   ChatPageHeader({
     required this.name,
     required this.imageUrl,
+    required this.chatWithId,
   });
 
   @override
@@ -77,48 +80,8 @@ class _ChatPageHeaderState extends State<ChatPageHeader> {
                   ],
                 ),
               ),
-              GestureDetector(
-                onTap: () => showDialog<String>(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: const Text('Send Adoption Request?'),
-                    content: const Text(
-                        'Are you sure you want to send a request to adopt Max?'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () async => {
-                          Navigator.pop(context, 'Yes'),
-                          await showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Adoption Request Sent!'),
-                              content: const Text(
-                                  'Your request to adopt Max has been sent successfully.'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, 'OK'),
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ),
-                          )
-                        },
-                        child: const Text(
-                          'Yes',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                child: const Icon(
-                  IconData(0xe4a1, fontFamily: 'MaterialIcons'),
-                  color: Colors.black54,
-                ),
+              AdoptionRequestBtn(
+                chatWithId: widget.chatWithId,
               ),
             ],
           ),

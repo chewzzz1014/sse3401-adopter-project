@@ -166,8 +166,6 @@ class _AdoptionCardState extends State<AdoptionCard> {
   }
 
   Widget _buildReceivedButtonUI() {
-    // TODO: no button/deactivate button if status is 1 or 2
-
     return Row(
       children: [
         ElevatedButton(
@@ -281,7 +279,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
         const SizedBox(width: 8),
         ElevatedButton(
           onPressed: () {
-            // TODO: direct to animal details page
+            // TODO: direct to animal details page (passing _animal.id)
           },
           style: OutlinedButton.styleFrom(
             side: const BorderSide(width: 0.8, color: Colors.grey),

@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/models/animal-adoption-request.dart';
 import 'package:sse3401_adopter_project/models/chat.dart';
 import 'package:sse3401_adopter_project/utils.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/animal.dart';
 import '../models/message.dart';
@@ -18,6 +19,7 @@ class DatabaseService {
   CollectionReference? _chatsCollection;
   CollectionReference? _animalsCollection;
   CollectionReference? _adoptionRequestsCollection;
+  Uuid uuid = const Uuid();
 
   DatabaseService() {
     _authService = _getIt.get<AuthService>();
@@ -40,13 +42,15 @@ class DatabaseService {
 
     _animalsCollection =
         _firebaseFirestore.collection("animals").withConverter<Animal>(
-          fromFirestore: (snapshot, _) => Animal.fromJson(snapshot.data()!),
-          toFirestore: (animal, _) => animal.toJson(),
-        );
+              fromFirestore: (snapshot, _) => Animal.fromJson(snapshot.data()!),
+              toFirestore: (animal, _) => animal.toJson(),
+            );
 
-    _adoptionRequestsCollection =
-        _firebaseFirestore.collection("adoptionReqs").withConverter<AdoptionRequest>(
-          fromFirestore: (snapshot, _) => AdoptionRequest.fromJson(snapshot.data()!),
+    _adoptionRequestsCollection = _firebaseFirestore
+        .collection("adoptionReqs")
+        .withConverter<AdoptionRequest>(
+          fromFirestore: (snapshot, _) =>
+              AdoptionRequest.fromJson(snapshot.data()!),
           toFirestore: (req, _) => req.toJson(),
         );
   }
@@ -66,9 +70,8 @@ class DatabaseService {
   }
 
   Stream<QuerySnapshot<Animal>> getAnimals() {
-    return _animalsCollection
-        ?.where("isAdopted", isEqualTo: false)
-        .snapshots() as Stream<QuerySnapshot<Animal>>;
+    return _animalsCollection?.where("isAdopted", isEqualTo: false).snapshots()
+        as Stream<QuerySnapshot<Animal>>;
   }
 
   // for chat feature
@@ -92,7 +95,8 @@ class DatabaseService {
     await docRef.set(chat);
   }
 
-  Future<void> sendChatMessage(String uid1, String uid2, Message message) async {
+  Future<void> sendChatMessage(
+      String uid1, String uid2, Message message) async {
     String chatID = generateChatID(uid1: uid1, uid2: uid2);
     final docRef = _chatsCollection!.doc(chatID);
     await docRef.update({
@@ -106,7 +110,8 @@ class DatabaseService {
 
   Stream<DocumentSnapshot<Chat>> getChatData(String uid1, String uid2) {
     String chatID = generateChatID(uid1: uid1, uid2: uid2);
-    return _chatsCollection?.doc(chatID).snapshots() as Stream<DocumentSnapshot<Chat>>;
+    return _chatsCollection?.doc(chatID).snapshots()
+        as Stream<DocumentSnapshot<Chat>>;
   }
 
   // get and update current user's profile
@@ -153,4 +158,31 @@ class DatabaseService {
     });
   }
 
+  Stream<QuerySnapshot<Animal>> getAvailableAnimalByOwnerId(String ownerId) {
+    return _animalsCollection
+        ?.where("ownerId", isEqualTo: ownerId)
+        .where("isAdopted", isEqualTo: false)
+        .snapshots() as Stream<QuerySnapshot<Animal>>;
+  }
+
+  Stream<QuerySnapshot<AdoptionRequest>> getAdoptionRequestsBetween2Users(String senderId, String receiverId) {
+    return _adoptionRequestsCollection
+        ?.where("senderId", isEqualTo: senderId)
+        .where("receiverId", isEqualTo: receiverId)
+        .snapshots() as Stream<QuerySnapshot<AdoptionRequest>>;
+  }
+
+  Future<void> createNewAdoptionReq(String animalId, String senderId, String receiverId) async {
+    String reqId = uuid.v4();
+    final docRef = _adoptionRequestsCollection!.doc(reqId);
+    final chat = AdoptionRequest(
+      id: reqId,
+      petId: animalId,
+      receiverId: receiverId,
+      senderId: senderId,
+      sentAt: Timestamp.fromDate(DateTime.now()),
+      status: 0,
+    );
+    await docRef.set(chat);
+  }
 }
