@@ -2,14 +2,17 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sse3401_adopter_project/models/animal.dart';
 import 'package:sse3401_adopter_project/widgets/multi_select_tags_drop_down.dart';
+import 'package:uuid/uuid.dart';
 
 import '../constants.dart' as Constants;
+import '../constants.dart';
 import '../services/alert_service.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
@@ -18,8 +21,6 @@ import '../services/navigation_service.dart';
 import '../services/storage_service.dart';
 
 enum Sex { Male, Female }
-
-final FirebaseAuth auth = FirebaseAuth.instance;
 
 class AddPetPage extends StatefulWidget {
   const AddPetPage({super.key});
@@ -30,25 +31,24 @@ class AddPetPage extends StatefulWidget {
 
 class _AddPetPageState extends State<AddPetPage> {
   final GetIt _getIt = GetIt.instance;
-  late AuthService _authService;
   late NavigationService _navigationService;
-  late AlertService _alertService;
   late MediaService _mediaService;
   late StorageService _storageService;
   late DatabaseService _databaseService;
+  late AlertService _alertService;
+  late AuthService _authService;
 
   final _formKey = GlobalKey<FormState>();
   bool _isFormValid = false;
 
-  String _petName = '';
-  Sex _sex = Sex.Male;
-  String _type = '';
+  late String _petName = '';
+  late Sex _sex = Sex.Male;
+  late String _type = '';
   String _size = '';
-  String _age = '';
-  String _description = '';
-  String _tags = '';
-
-  final uid = auth.currentUser!.uid;
+  late String _age = '';
+  late String _description = '';
+  late String _tags = '';
+  late String pickedImageUrl;
 
   PlatformFile? pickedPicture;
   PlatformFile? pickedHealthDoc;
@@ -67,12 +67,12 @@ class _AddPetPageState extends State<AddPetPage> {
         value: tag,
       );
     }).toList());
-    _authService = _getIt.get<AuthService>();
     _navigationService = _getIt.get<NavigationService>();
-    _alertService = _getIt.get<AlertService>();
     _mediaService = _getIt.get<MediaService>();
     _storageService = _getIt.get<StorageService>();
     _databaseService = _getIt.get<DatabaseService>();
+    _alertService = _getIt.get<AlertService>();
+    _authService = _getIt.get<AuthService>();
   }
 
   @override
@@ -81,45 +81,61 @@ class _AddPetPageState extends State<AddPetPage> {
     _multiDropdownController.dispose();
   }
 
-  Future uploadPicture() async {
-    final result = await FilePicker.platform.pickFiles();
+  Future uploadImage() async {
+    PermissionStatus status = await Permission.storage.request();
+    print('$status');
+    if (status.isDenied) {
+      return _alertService.showToast(text: "Access to storage denied");
+    }
 
-    final path = '$uid/${pickedPicture!.name}';
-    final picture = File(pickedPicture!.path!);
+    final file = await FilePicker.platform.pickFiles();
 
-    if (result == null) return;
+    if (file == null) return;
 
     setState(() {
-      pickedPicture = result.files.first;
+      pickedPicture = file.files.first;
     });
-
-    final ref = FirebaseStorage.instance.ref().child(path);
-    ref.putFile(picture);
   }
+
+
 
   Future uploadHealthDoc() async {
-    final result = await FilePicker.platform.pickFiles();
+    PermissionStatus status = await Permission.storage.request();
+    debugPrint('>>>Status $status');
+    if (status.isDenied) {
+      return _alertService.showToast(text: "Access to storage denied");
+    }
 
-    final path = '$uid/${pickedHealthDoc!.name}';
-    final document = File(pickedHealthDoc!.path!);
+    final file = await FilePicker.platform.pickFiles();
 
-    if (result == null) return;
+    if (file == null) return;
 
     setState(() {
-      pickedHealthDoc = result.files.first;
+      pickedHealthDoc = file.files.first;
     });
-
-    final ref = FirebaseStorage.instance.ref().child(path);
-    ref.putFile(document);
   }
 
-  void _validateInputs() {
+  Future<void> _validateInputs() async {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState?.save(); // save each form
 
+      final imageUrl = await _storageService
+          .uploadAnimalsImage(file: File(pickedPicture!.path!), petName: _petName);
+      setState(() {
+        pickedImageUrl = imageUrl!;
+      });
+      _storageService.uploadHealthDoc(file: File(pickedHealthDoc!.path!), petName: _petName);
 
+      final uid = _authService.user!.uid;
+      const petId = Uuid();
+      Animal newAnimal = Animal(ownerId: uid, id: petId.v4(),
+          imageUrl: imageUrl, name: _petName, gender: _sex.name,
+          type: _type, size: _size, age: int.parse(_age), description: _description,
+          personality: personalityTags, isAdopted: false);
 
-      Navigator.pop(context);
+      _databaseService.createAnimalProfile(animal: newAnimal);
+      
+      if (context.mounted) Navigator.of(context).pop();
     } else {
       print("Form is invalid");
     }
@@ -224,14 +240,7 @@ class _AddPetPageState extends State<AddPetPage> {
                             labelText: 'Type',
                             labelStyle: GoogleFonts.inter(
                                 fontSize: 16, fontWeight: FontWeight.w500)),
-                        items: <String>[
-                          'Dog',
-                          'Cat',
-                          'Bird',
-                          'Turtle',
-                          'Fish',
-                          'Salamander'
-                        ].map((String value) {
+                        items: animalTypes.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -254,7 +263,7 @@ class _AddPetPageState extends State<AddPetPage> {
                     Expanded(
                       child: TextFormField(
                         decoration: InputDecoration(
-                            labelText: 'Size',
+                            labelText: 'Size (optional)',
                             hintText: 'In centimeter (cm)',
                             labelStyle: GoogleFonts.inter(
                                 fontSize: 16, fontWeight: FontWeight.w500),
@@ -270,12 +279,12 @@ class _AddPetPageState extends State<AddPetPage> {
                       child: TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter the size!';
+                            return 'Please enter the age!';
                           }
                           return null;
                         },
                         decoration: InputDecoration(
-                          labelText: 'Age (optional)',
+                          labelText: 'Age',
                           labelStyle: GoogleFonts.inter(
                               fontSize: 16, fontWeight: FontWeight.w500),
                         ),
@@ -320,9 +329,9 @@ class _AddPetPageState extends State<AddPetPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: uploadPicture,
+                  onPressed: uploadImage,
                   child: Text(
-                    'Upload a picture!',
+                    'Upload a picture of your pet!',
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary),
                   ),

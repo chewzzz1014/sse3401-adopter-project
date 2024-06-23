@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sse3401_adopter_project/constants.dart';
 import 'package:sse3401_adopter_project/mockData/mock-pet.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:sse3401_adopter_project/widgets/swiping-card.dart';
@@ -25,11 +28,13 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
   late NavigationService _navigationService;
   late StorageService _storageService;
 
-  late List<Animal> petsFiltered = animalList;
+  final AppinioSwiperController _swiperController = AppinioSwiperController();
 
-  final AppinioSwiperController controller = AppinioSwiperController();
-
-  // static const List<Animal> _animalData =
+  List<Animal> animalsToShow = [];
+  List<String> selectedTypes = [];
+  List<String> selectedGenders = [];
+  List<String> selectedAges = [];
+  bool allSwiped = false;
 
   @override
   void initState() {
@@ -37,71 +42,101 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
     _databaseService = _getIt.get<DatabaseService>();
     _navigationService = _getIt.get<NavigationService>();
     _storageService = _getIt.get<StorageService>();
+    _initAnimals();
+  }
+
+  void _initAnimals() {
+    _databaseService.getAnimals().listen((QuerySnapshot<Animal> snapshot) {
+      List<Animal> animals = snapshot.docs.map((doc) => doc.data()).toList();
+      setState(() {
+        animalsToShow = animals;
+        allSwiped = false;
+      });
+    });
   }
 
   @override
-  void didChangeDependencies() async {
+  void dispose() {
+    super.dispose();
+    _swiperController.dispose();
+  }
 
-    super.didChangeDependencies();
+  void _applyFilters(List<Animal> animals, List<String> types,
+      List<String> genders, List<String> ages) {
+    List<Animal> filtered = animals;
 
-    if (petsFiltered.isNotEmpty) {
-      for (var pet in petsFiltered) {
-        await precacheImage(AssetImage(pet.imageUrl!), context);
-      }
+    if (types.isNotEmpty) {
+      filtered =
+          filtered.where((animal) => types.contains(animal.type)).toList();
     }
+    if (genders.isNotEmpty) {
+      filtered =
+          filtered.where((animal) => genders.contains(animal.gender)).toList();
+    }
+    if (ages.isNotEmpty) {
+      filtered = filtered
+          .where((animal) =>
+              (ages.contains('Less than 3') && animal.age! < 3) ||
+              (ages.contains('Equal or greater than 3') && animal.age! >= 3))
+          .toList();
+    }
+
+    setState(() {
+      animalsToShow = animals;
+    });
   }
 
   Future<void> _openFilterDialog() async {
-  //   await FilterListDialog.display<User>(
-  //     context,
-  //     hideSelectedTextCount: true,
-  //     themeData: FilterListThemeData(
-  //       context,
-  //       choiceChipTheme: ChoiceChipThemeData.light(context),
-  //     ),
-  //     headlineText: 'Select Users',
-  //     height: 500,
-  //     listData: userList,
-  //     selectedListData: selectedUserList,
-  //     choiceChipLabel: (item) => item!.name,
-  //     validateSelectedItem: (list, val) => list!.contains(val),
-  //     controlButtons: [ControlButtonType.All, ControlButtonType.Reset],
-  //     onItemSearch: (user, query) {
-  //       /// When search query change in search bar then this method will be called
-  //       ///
-  //       /// Check if items contains query
-  //       return user.name!.toLowerCase().contains(query.toLowerCase());
-  //     },
-  //
-  //     onApplyButtonClick: (list) {
-  //       setState(() {
-  //         selectedUserList = List.from(list!);
-  //       });
-  //       Navigator.pop(context);
-  //     },
-  //     onCloseWidgetPress: () {
-  //       // Do anything with the close button.
-  //       //print("hello");
-  //       Navigator.pop(context, null);
-  //     },
-  //
-  //     /// uncomment below code to create custom choice chip
-  //     /* choiceChipBuilder: (context, item, isSelected) {
-  //       return Container(
-  //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-  //         decoration: BoxDecoration(
-  //             border: Border.all(
-  //           color: isSelected! ? Colors.blue[300]! : Colors.grey[300]!,
-  //         )),
-  //         child: Text(
-  //           item.name,
-  //           style: TextStyle(
-  //               color: isSelected ? Colors.blue[300] : Colors.grey[500]),
-  //         ),
-  //       );
-  //     }, */
-  //   );
+    await FilterListDialog.display<String>(
+      context,
+      hideSelectedTextCount: true,
+      themeData: FilterListThemeData(
+        context,
+        choiceChipTheme: ChoiceChipThemeData.light(context),
+      ),
+      headlineText: 'Filter animals',
+      height: 500,
+      listData: animalTypes + genders + ageOptions,
+      selectedListData: selectedTypes + selectedGenders + selectedAges,
+      choiceChipLabel: (item) => item!,
+      validateSelectedItem: (list, val) => list!.contains(val),
+      controlButtons: [ControlButtonType.All, ControlButtonType.Reset],
+      onItemSearch: (item, query) {
+        /// When search query change in search bar then this method will be called
+        return item.toLowerCase().contains(query.toLowerCase());
+      },
+      onApplyButtonClick: (list) {
+        setState(() {
+          selectedTypes =
+              list?.where((item) => animalTypes.contains(item)).toList() ?? [];
+          selectedGenders =
+              list?.where((item) => genders.contains(item)).toList() ?? [];
+          selectedAges =
+              list?.where((item) => ageOptions.contains(item)).toList() ?? [];
+        });
+        Navigator.pop(context);
+      },
+      onCloseWidgetPress: () {
+        Navigator.pop(context, null);
+      },
+
+      /// uncomment below code to create custom choice chip
+      /* choiceChipBuilder: (context, item, isSelected) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          decoration: BoxDecoration(
+              border: Border.all(
+            color: isSelected! ? Colors.blue[300]! : Colors.grey[300]!,
+          )),
+          child: Text(
+            item.name,
+            style: TextStyle(
+                color: isSelected ? Colors.blue[300] : Colors.grey[500]),
+          ),
+        );
+      }, */
+    );
   }
 
   @override
@@ -111,20 +146,30 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
         width: MediaQuery.of(context).size.width * 0.8,
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                child: const Text("Filter the list:"),
-                onPressed: () {
-                  _openFilterDialog;
-                },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  child: const Text(
+                    "Filter the list >",
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  onPressed: () {
+                    _openFilterDialog;
+                  },
+                ),
               ),
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.5,
-              child: FutureBuilder(
-                future: Future.wait(petsFiltered.map(
-                    (pet) => precacheImage(AssetImage(pet.imageUrl!), context))),
+              child: allSwiped
+                ? const Center(child: Text("No more animals to show :("),)
+                  : FutureBuilder(
+                future: Future.wait(animalsToShow.map((pet) =>
+                    precacheImage(NetworkImage(pet.imageUrl!), context))),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return AppinioSwiper(
@@ -132,15 +177,15 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
                       invertAngleOnBottomDrag: true,
                       backgroundCardCount: 2,
                       swipeOptions: const SwipeOptions.all(),
-                      controller: controller,
+                      controller: _swiperController,
                       onCardPositionChanged: (
-                        SwiperPosition position,
-                      ) {},
+                          SwiperPosition position,
+                          ) {},
                       onSwipeEnd: _swipeEnd,
                       onEnd: _onEnd,
-                      cardCount: petsFiltered.length,
+                      cardCount: animalsToShow.length,
                       cardBuilder: (BuildContext context, int index) {
-                        return AnimalCard(animal: petsFiltered[index]);
+                        return AnimalCard(animal: animalsToShow[index]);
                       },
                     );
                   } else {
@@ -155,8 +200,8 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  swipeLeftButton(controller),
-                  swipeRightButton(controller),
+                  swipeLeftButton(_swiperController),
+                  swipeRightButton(_swiperController),
                 ],
               ),
             )
@@ -186,6 +231,8 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
   }
 
   void _onEnd() {
-    //
+    setState(() {
+      allSwiped = true;
+    });
   }
 }

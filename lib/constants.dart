@@ -1,8 +1,10 @@
+import 'dart:core';
+
 final EMAIL_REGEX = RegExp(r'^[^@]+@[^@]+\.[^@]+');
 
 final PHONE_REGEX = RegExp(r'^\d+$');
 
-final String USER_PLACEHOLDER_IMG = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png';
+const String USER_PLACEHOLDER_IMG = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png';
 // final String USER_PLACEHOLDER_IMG = 'https://i.pravatar.cc/150?img=10';
 
 const List<String> personalityTags = [
@@ -30,3 +32,23 @@ const List<String> personalityTags = [
   'Foodie',
 ];
 
+const List<String> animalTypes = [
+  'Cat',
+  'Dog',
+  'Bird',
+  'Turtle',
+  'Fish',
+  'Rabbit',
+  'Salamander',
+  'Hamster',
+];
+
+const List<String> genders = [
+  'Male',
+  'Female',
+];
+
+const List<String> ageOptions = [
+  'Less than 3',
+  'Equal or greater than 3',
+];
