@@ -34,7 +34,7 @@ class AnimalCard extends StatelessWidget {
             flex: 2,
             child: Container(
               decoration: BoxDecoration(
-                image: DecorationImage(image: AssetImage(animal.imageUrl!), fit: BoxFit.cover,),
+                image: DecorationImage(image: NetworkImage(animal.imageUrl!), fit: BoxFit.cover,),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),

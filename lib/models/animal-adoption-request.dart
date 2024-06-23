@@ -38,7 +38,7 @@ class AdoptionRequest {
     data['receiverId'] = receiverId;
     data['senderId'] = senderId;
     data['sentAt'] = sentAt;
-    data['status'] = status;;
+    data['status'] = status;
     return data;
   }
 }

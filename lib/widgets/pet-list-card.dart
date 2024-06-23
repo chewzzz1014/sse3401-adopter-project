@@ -51,13 +51,10 @@ class _PetCardState extends State<PetCard> {
               SizedBox(
                 height: 130,
                 width: 110,
-                child: Image.asset(
-                  widget.animal.imageUrl!.isEmpty
-                      ? 'assets/images/userImage.jpg'
-                      : widget.animal.imageUrl!,
-                  fit: BoxFit.cover,
+                child: widget.animal.imageUrl!.isEmpty
+                    ? Image.asset('assets/images/userImage.jpg', fit: BoxFit.cover,)
+                    : Image.network(widget.animal.imageUrl!, fit: BoxFit.cover,),
                 ),
-              ),
               const SizedBox(width: 8),
               Flexible(
                 flex: 2,
