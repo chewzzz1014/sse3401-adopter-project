@@ -39,6 +39,7 @@ class AdoptionRequest {
     data['senderId'] = senderId;
     data['sentAt'] = sentAt;
     data['status'] = status;
+
     return data;
   }
 }
