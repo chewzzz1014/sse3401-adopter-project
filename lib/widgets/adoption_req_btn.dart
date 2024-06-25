@@ -124,7 +124,8 @@ class _AdoptionRequestBtnState extends State<AdoptionRequestBtn> {
     );
   }
 
-  void _sendAdoptionReq(String animalId, String receiverId, String senderId) async {
+  void _sendAdoptionReq(
+      String animalId, String receiverId, String senderId) async {
     await _databaseService.createNewAdoptionReq(animalId, senderId, receiverId);
 
     Navigator.pop(context, 'Yes');
@@ -160,6 +161,17 @@ class _AdoptionRequestBtnState extends State<AdoptionRequestBtn> {
                         }
                         if (snapshot.hasData && snapshot.data != null) {
                           final animals = snapshot.data!.docs;
+
+                          if (animals.isEmpty) {
+                            return const Center(
+                                child: Text(
+                              "No animals available",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ));
+                          }
+
                           return SizedBox(
                             height: 150, // Adjust the height as needed
                             child: ListView.builder(
