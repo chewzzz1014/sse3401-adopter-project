@@ -147,7 +147,7 @@ class _AddPetPageState extends State<AddPetPage> {
         final List<String> nonNullSelectedTags = selectedTags.whereType<String>().toList();
         final uid = _authService.user!.uid;
         const petId = Uuid();
-
+        
         // Debug print the value of _age
         print('Age value: $_age');
 
@@ -217,7 +217,7 @@ class _AddPetPageState extends State<AddPetPage> {
                       labelText: 'Pet\'s Name',
                       labelStyle: GoogleFonts.inter(
                           fontSize: 16, fontWeight: FontWeight.w500)),
-                  onSaved: (value) {
+                  onChanged: (value) {
                     _petName = value!;
                   },
                 ),
@@ -309,8 +309,11 @@ class _AddPetPageState extends State<AddPetPage> {
                                 fontSize: 16, fontWeight: FontWeight.w500),
                             hintStyle: GoogleFonts.inter(
                                 fontSize: 16, fontWeight: FontWeight.w500)),
-                        onSaved: (value) {
-                          _size = value!;
+                        onChanged: (value) {
+                          // _size = value!;
+                          setState(() {
+                            _size = value;
+                          });
                         },
                       ),
                     ),
@@ -322,6 +325,9 @@ class _AddPetPageState extends State<AddPetPage> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter the age!';
                           }
+                          if(int.tryParse(value) == null) {
+                            return 'Please enter a valid age';
+                          }
                           return null;
                         },
                         decoration: InputDecoration(
@@ -329,8 +335,11 @@ class _AddPetPageState extends State<AddPetPage> {
                           labelStyle: GoogleFonts.inter(
                               fontSize: 16, fontWeight: FontWeight.w500),
                         ),
-                        onSaved: (value) {
-                          _age = value!;
+                        onChanged: (value) {
+                          // _age = value!;
+                          setState(() {
+                            _age = value!;
+                          });
                         },
                       ),
                     ),
