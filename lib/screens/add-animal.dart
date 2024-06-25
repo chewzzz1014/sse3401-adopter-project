@@ -31,6 +31,8 @@ class AddPetPage extends StatefulWidget {
 
 class _AddPetPageState extends State<AddPetPage> {
   final GetIt _getIt = GetIt.instance;
+  late NavigationService _navigationService;
+  late MediaService _mediaService;
   late StorageService _storageService;
   late DatabaseService _databaseService;
   late AlertService _alertService;
@@ -51,7 +53,7 @@ class _AddPetPageState extends State<AddPetPage> {
   PlatformFile? pickedHealthDoc;
 
   final MultiSelectController _multiDropdownController =
-      MultiSelectController();
+  MultiSelectController();
   // Define TextEditingController for each text field
   final TextEditingController _petNameController = TextEditingController();
   final TextEditingController _sizeController = TextEditingController();
@@ -69,6 +71,8 @@ class _AddPetPageState extends State<AddPetPage> {
         value: tag,
       );
     }).toList());
+    _navigationService = _getIt.get<NavigationService>();
+    _mediaService = _getIt.get<MediaService>();
     _storageService = _getIt.get<StorageService>();
     _databaseService = _getIt.get<DatabaseService>();
     _alertService = _getIt.get<AlertService>();
@@ -317,9 +321,6 @@ class _AddPetPageState extends State<AddPetPage> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter the age!';
-                          }
-                          if (int.tryParse(value) == null) {
-                            return 'Please enter a valid age';
                           }
                           return null;
                         },
