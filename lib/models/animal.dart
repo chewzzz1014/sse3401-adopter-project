@@ -40,7 +40,8 @@ class Animal {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic> {};
+    data['ownerId'] = ownerId;
     data['id'] = id;
     data['imageUrl'] = imageUrl ?? '';
     data['name'] = name;
