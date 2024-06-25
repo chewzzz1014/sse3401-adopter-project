@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,7 +46,6 @@ class _AddPetPageState extends State<AddPetPage> {
   String _size = '';
   late String _age = '';
   late String _description = '';
-  late String _tags = '';
   late String pickedImageUrl;
 
   PlatformFile? pickedPicture;
@@ -55,6 +53,11 @@ class _AddPetPageState extends State<AddPetPage> {
 
   final MultiSelectController _multiDropdownController =
       MultiSelectController();
+  // Define TextEditingController for each text field
+  final TextEditingController _petNameController = TextEditingController();
+  final TextEditingController _sizeController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   static const List<String> _initialTags = Constants.personalityTags;
 
@@ -78,6 +81,11 @@ class _AddPetPageState extends State<AddPetPage> {
   @override
   void dispose() {
     super.dispose();
+    // Dispose the controllers
+    _petNameController.dispose();
+    _sizeController.dispose();
+    _ageController.dispose();
+    _descriptionController.dispose();
     _multiDropdownController.dispose();
   }
 
@@ -96,8 +104,6 @@ class _AddPetPageState extends State<AddPetPage> {
       pickedPicture = file.files.first;
     });
   }
-
-
 
   Future uploadHealthDoc() async {
     PermissionStatus status = await Permission.storage.request();
@@ -126,15 +132,31 @@ class _AddPetPageState extends State<AddPetPage> {
       });
       _storageService.uploadHealthDoc(file: File(pickedHealthDoc!.path!), petName: _petName);
 
+      final List<String> selectedTags = _multiDropdownController.selectedOptions.map((item) => item.value.toString()).toList();
+      final List<String> nonNullSelectedTags = selectedTags.whereType<String>().toList();
       final uid = _authService.user!.uid;
       const petId = Uuid();
+
+      // Debug print the value of _age
+      print('Age value: $_age');
+
+      int parsedAge;
+      try {
+        parsedAge = int.parse(_age);
+      } catch (e) {
+        print('Error parsing age: $e');
+        _alertService.showToast(text: "Invalid age entered");
+        return;
+      }
+
       Animal newAnimal = Animal(ownerId: uid, id: petId.v4(),
           imageUrl: imageUrl, name: _petName, gender: _sex.name,
           type: _type, size: _size, age: int.parse(_age), description: _description,
-          personality: personalityTags, isAdopted: false);
+          personality: nonNullSelectedTags, isAdopted: false);
 
-      _databaseService.createAnimalProfile(animal: newAnimal);
-      
+      await _databaseService.createAnimalProfile(animal: newAnimal);
+      if (newAnimal.ownerId != null) print(newAnimal.ownerId);
+
       if (context.mounted) Navigator.of(context).pop();
     } else {
       print("Form is invalid");
@@ -168,6 +190,7 @@ class _AddPetPageState extends State<AddPetPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: TextFormField(
+                  controller: _petNameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter the pet\'s name!';
@@ -262,6 +285,7 @@ class _AddPetPageState extends State<AddPetPage> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        controller: _sizeController,
                         decoration: InputDecoration(
                             labelText: 'Size (optional)',
                             hintText: 'In centimeter (cm)',
@@ -277,6 +301,7 @@ class _AddPetPageState extends State<AddPetPage> {
                     const SizedBox(width: 16.0),
                     Expanded(
                       child: TextFormField(
+                        controller: _ageController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter the age!';
@@ -299,6 +324,7 @@ class _AddPetPageState extends State<AddPetPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
                 child: TextFormField(
+                  controller: _descriptionController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter some description!';
@@ -328,13 +354,16 @@ class _AddPetPageState extends State<AddPetPage> {
               const SizedBox(height: 16.0),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: uploadImage,
-                  child: Text(
-                    'Upload a picture of your pet!',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary),
+                child: ListTile(
+                  leading: ElevatedButton(
+                    onPressed: uploadImage,
+                    child: Text(
+                      'Upload a picture of your pet!',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
                   ),
+                  trailing: pickedPicture != null ? const Icon(Icons.check) : const Icon(Icons.close),
                 ),
               ),
               if (pickedPicture != null)
@@ -348,13 +377,16 @@ class _AddPetPageState extends State<AddPetPage> {
                 ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: uploadHealthDoc,
-                  child: Text(
-                    'Upload health documents!',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary),
+                child: ListTile(
+                  leading: ElevatedButton(
+                    onPressed: uploadHealthDoc,
+                    child: Text(
+                      'Upload health documents!',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
                   ),
+                  trailing: pickedHealthDoc != null ? const Icon(Icons.check) : const Icon(Icons.close),
                 ),
               ),
               const SizedBox(height: 16.0),

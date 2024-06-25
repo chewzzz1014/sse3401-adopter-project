@@ -50,7 +50,7 @@ class _PetCardState extends State<PetCard> {
             children: [
               SizedBox(
                 height: 130,
-                width: 110
+                width: 110,
                 child: widget.animal.imageUrl!.isEmpty
                     ? Image.asset('assets/images/userImage.jpg', fit: BoxFit.cover,)
                     : Image.network(widget.animal.imageUrl!, fit: BoxFit.cover,),

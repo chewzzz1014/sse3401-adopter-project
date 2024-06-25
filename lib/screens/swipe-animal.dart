@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sse3401_adopter_project/constants.dart';
-import 'package:sse3401_adopter_project/mockData/mock-pet.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
+import 'package:sse3401_adopter_project/services/auth_service.dart';
 import 'package:sse3401_adopter_project/widgets/swiping-card.dart';
 import 'package:filter_list/filter_list.dart';
 
@@ -27,6 +27,7 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
   late DatabaseService _databaseService;
   late NavigationService _navigationService;
   late StorageService _storageService;
+  late AuthService _authService;
 
   final AppinioSwiperController _swiperController = AppinioSwiperController();
 
@@ -42,12 +43,16 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
     _databaseService = _getIt.get<DatabaseService>();
     _navigationService = _getIt.get<NavigationService>();
     _storageService = _getIt.get<StorageService>();
+    _authService = _getIt.get<AuthService>();
     _initAnimals();
   }
 
   void _initAnimals() {
     _databaseService.getAnimals().listen((QuerySnapshot<Animal> snapshot) {
-      List<Animal> animals = snapshot.docs.map((doc) => doc.data()).toList();
+
+      List<Animal> animals = snapshot.docs.map(
+              (doc) => doc.data()
+      ).where((animal) => animal.ownerId != _authService.user!.uid).toList();
       setState(() {
         animalsToShow = animals;
         allSwiped = false;
@@ -82,7 +87,7 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
     }
 
     setState(() {
-      animalsToShow = animals;
+      animalsToShow = filtered;
     });
   }
 
@@ -113,6 +118,7 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
               list?.where((item) => genders.contains(item)).toList() ?? [];
           selectedAges =
               list?.where((item) => ageOptions.contains(item)).toList() ?? [];
+          _applyFilters(animalsToShow, selectedTypes, selectedGenders, selectedAges);
         });
         Navigator.pop(context);
       },
@@ -151,15 +157,13 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
+                  onPressed: _openFilterDialog,
                   child: const Text(
                     "Filter the list >",
                     style: TextStyle(
                       fontSize: 20,
                     ),
                   ),
-                  onPressed: () {
-                    _openFilterDialog;
-                  },
                 ),
               ),
             ),
@@ -183,9 +187,13 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
                           ) {},
                       onSwipeEnd: _swipeEnd,
                       onEnd: _onEnd,
-                      cardCount: animalsToShow.length,
+                      cardCount: animalsToShow.isNotEmpty ? animalsToShow.length : 1,
                       cardBuilder: (BuildContext context, int index) {
-                        return AnimalCard(animal: animalsToShow[index]);
+                        if (animalsToShow.isEmpty) {
+                          return const Center(child: Text("No animals available"));
+                        } else {
+                          return AnimalCard(animal: animalsToShow[index]);
+                        }
                       },
                     );
                   } else {
@@ -195,16 +203,17 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
               ),
             ),
             const SizedBox(height: 60),
-            IconTheme.merge(
-              data: const IconThemeData(size: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  swipeLeftButton(_swiperController),
-                  swipeRightButton(_swiperController),
-                ],
-              ),
-            )
+            if (animalsToShow.isNotEmpty)
+              IconTheme.merge(
+                data: const IconThemeData(size: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    swipeLeftButton(_swiperController),
+                    swipeRightButton(_swiperController),
+                  ],
+                ),
+              )
           ],
         ),
       ),
