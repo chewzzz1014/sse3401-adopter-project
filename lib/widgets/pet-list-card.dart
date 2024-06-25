@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sse3401_adopter_project/services/database_service.dart';
 import 'package:sse3401_adopter_project/widgets/pet-personality-badge.dart';
 
 import '../models/animal.dart';
@@ -8,10 +9,12 @@ import '../services/navigation_service.dart';
 
 class PetCard extends StatefulWidget {
   Animal animal;
+  final String documentId;
 
   PetCard({
     super.key,
     required this.animal,
+    required this.documentId,
   });
 
   @override
@@ -27,6 +30,7 @@ class _PetCardState extends State<PetCard> {
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;
   late NavigationService _navigationService;
+  late DatabaseService _databaseService;
 
   @override
   void initState() {
@@ -39,7 +43,7 @@ class _PetCardState extends State<PetCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _navigationService.pushNamed('/addAnimal');
+        _navigationService.pushNamedArgument('/animalDetail', arguments: widget.documentId);
       },
       child: Card(
         margin: const EdgeInsets.all(8.0),

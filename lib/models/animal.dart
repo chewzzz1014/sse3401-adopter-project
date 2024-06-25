@@ -25,6 +25,30 @@ class Animal {
     required this.isAdopted,
   });
 
+  Animal copyWith({
+    String? name,
+    String? imageURL,
+    int? age,
+    String? size,
+    String? description,
+    List<String>? personality,
+
+  }) {
+    return Animal(
+      ownerId: ownerId ?? ownerId,
+      id: id ?? id,
+      name: name ?? this.name,
+      imageUrl: imageURL ?? this.imageUrl,
+      age: age ?? this.age,
+      size: size ?? this.size,
+      gender: gender ?? gender,
+      type: type ?? type,
+      description: description ?? this.description,
+      personality: personality ?? this.personality,
+      isAdopted: isAdopted ?? isAdopted,
+    );
+  }
+
   Animal.fromJson(Map<String, dynamic> json) {
     ownerId = json['ownerId'];
     id = json['id'];

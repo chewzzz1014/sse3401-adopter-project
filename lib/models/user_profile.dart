@@ -20,7 +20,7 @@ class UserProfile {
     String? age,
   }) {
     return UserProfile(
-      uid: uid ?? this.uid,
+      uid: uid ?? uid,
       username: username ?? this.username,
       pfpURL: pfpURL ?? this.pfpURL,
       phoneNumber: phoneNumber ?? this.phoneNumber,
