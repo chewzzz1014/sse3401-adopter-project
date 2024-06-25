@@ -57,6 +57,17 @@ class _PetListPageState extends State<PetListPage> {
                           print(snapshot.data);
                           if (snapshot.hasData && snapshot.data != null) {
                             final animals = snapshot.data!.docs;
+
+                            if (animals.isEmpty) {
+                              return const Center(
+                                  child: Text(
+                                "No animals available",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ));
+                            }
+
                             return SingleChildScrollView(
                               child: ListView.builder(
                                 itemCount: animals.length,
@@ -97,6 +108,17 @@ class _PetListPageState extends State<PetListPage> {
                               print(snapshot.data);
                               if (snapshot.hasData && snapshot.data != null) {
                                 final receivedRequests = snapshot.data!.docs;
+
+                                if (receivedRequests.isEmpty) {
+                                  return const Center(
+                                      child: Text(
+                                    "No records available :(",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ));
+                                }
+
                                 return SingleChildScrollView(
                                   child: ListView.builder(
                                     itemCount: receivedRequests.length,
@@ -128,8 +150,7 @@ class _PetListPageState extends State<PetListPage> {
                             ),
                           ),
                           StreamBuilder(
-                            stream:
-                            _databaseService.getSentAdoptionRequests(),
+                            stream: _databaseService.getSentAdoptionRequests(),
                             builder: (context, snapshot) {
                               if (snapshot.hasError) {
                                 return const Center(
@@ -137,17 +158,28 @@ class _PetListPageState extends State<PetListPage> {
                               }
                               print(snapshot.data);
                               if (snapshot.hasData && snapshot.data != null) {
-                                final receivedRequests = snapshot.data!.docs;
+                                final sentRequests = snapshot.data!.docs;
+
+                                if (sentRequests.isEmpty) {
+                                  return const Center(
+                                      child: Text(
+                                        "No records available :(",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ));
+                                }
+
                                 return SingleChildScrollView(
                                   child: ListView.builder(
-                                    itemCount: receivedRequests.length,
+                                    itemCount: sentRequests.length,
                                     shrinkWrap: true,
                                     padding: const EdgeInsets.only(top: 8),
                                     physics:
-                                    const NeverScrollableScrollPhysics(),
+                                        const NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
                                       AdoptionRequest req =
-                                      receivedRequests[index].data();
+                                          sentRequests[index].data();
                                       return AdoptionCard(
                                         adoptionRequest: req,
                                         type: 'Sent',

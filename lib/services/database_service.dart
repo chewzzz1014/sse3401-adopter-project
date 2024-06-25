@@ -70,8 +70,10 @@ class DatabaseService {
   }
 
   Stream<QuerySnapshot<Animal>> getAnimals() {
-    return _animalsCollection?.where("isAdopted", isEqualTo: false).snapshots()
-        as Stream<QuerySnapshot<Animal>>;
+    return _animalsCollection
+        ?.where("isAdopted", isEqualTo: false)
+        .where("ownerId", isEqualTo: _authService.user!.uid)
+        .snapshots() as Stream<QuerySnapshot<Animal>>;
   }
 
   // for chat feature
@@ -165,14 +167,16 @@ class DatabaseService {
         .snapshots() as Stream<QuerySnapshot<Animal>>;
   }
 
-  Stream<QuerySnapshot<AdoptionRequest>> getAdoptionRequestsBetween2Users(String senderId, String receiverId) {
+  Stream<QuerySnapshot<AdoptionRequest>> getAdoptionRequestsBetween2Users(
+      String senderId, String receiverId) {
     return _adoptionRequestsCollection
         ?.where("senderId", isEqualTo: senderId)
         .where("receiverId", isEqualTo: receiverId)
         .snapshots() as Stream<QuerySnapshot<AdoptionRequest>>;
   }
 
-  Future<void> createNewAdoptionReq(String animalId, String senderId, String receiverId) async {
+  Future<void> createNewAdoptionReq(
+      String animalId, String senderId, String receiverId) async {
     String reqId = uuid.v4();
     final docRef = _adoptionRequestsCollection!.doc(reqId);
     final chat = AdoptionRequest(
