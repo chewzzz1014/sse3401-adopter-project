@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/constants.dart';
@@ -170,7 +169,7 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.5,
               child: allSwiped
-                ? const Center(child: Text("No more animals to show :("),)
+                ? const Center(child: Text("No matching animals :("),)
                   : FutureBuilder(
                 future: Future.wait(animalsToShow.map((pet) =>
                     precacheImage(NetworkImage(pet.imageUrl!), context))),
@@ -190,7 +189,7 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
                       cardCount: animalsToShow.isNotEmpty ? animalsToShow.length : 1,
                       cardBuilder: (BuildContext context, int index) {
                         if (animalsToShow.isEmpty) {
-                          return const Center(child: Text("No animals available"));
+                          return const Center(child: Text("No animals available to swipe :("));
                         } else {
                           return AnimalCard(animal: animalsToShow[index]);
                         }

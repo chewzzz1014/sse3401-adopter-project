@@ -18,6 +18,7 @@ import '../services/database_service.dart';
 import '../services/media_service.dart';
 import '../services/navigation_service.dart';
 import '../services/storage_service.dart';
+import '../widgets/loading-dialog.dart';
 
 enum Sex { Male, Female }
 
@@ -125,41 +126,56 @@ class _AddPetPageState extends State<AddPetPage> {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState?.save(); // save each form
 
-      final imageUrl = await _storageService
-          .uploadAnimalsImage(file: File(pickedPicture!.path!), petName: _petName);
-      setState(() {
-        pickedImageUrl = imageUrl!;
-      });
-      _storageService.uploadHealthDoc(file: File(pickedHealthDoc!.path!), petName: _petName);
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const LoadingDialog();
+        },
+      );
 
-      final List<String> selectedTags = _multiDropdownController.selectedOptions.map((item) => item.value.toString()).toList();
-      final List<String> nonNullSelectedTags = selectedTags.whereType<String>().toList();
-      final uid = _authService.user!.uid;
-      const petId = Uuid();
-
-      // Debug print the value of _age
-      print('Age value: $_age');
-
-      int parsedAge;
       try {
-        parsedAge = int.parse(_age);
+        final imageUrl = await _storageService
+            .uploadAnimalsImage(file: File(pickedPicture!.path!), petName: _petName);
+        setState(() {
+          pickedImageUrl = imageUrl!;
+        });
+        _storageService.uploadHealthDoc(file: File(pickedHealthDoc!.path!), petName: _petName);
+
+        final List<String> selectedTags = _multiDropdownController.selectedOptions.map((item) => item.value.toString()).toList();
+        final List<String> nonNullSelectedTags = selectedTags.whereType<String>().toList();
+        final uid = _authService.user!.uid;
+        const petId = Uuid();
+
+        // Debug print the value of _age
+        print('Age value: $_age');
+
+        int parsedAge;
+        try {
+          parsedAge = int.parse(_age);
+        } catch (e) {
+          print('Error parsing age: $e');
+          _alertService.showToast(text: "Invalid age entered");
+          return;
+        }
+
+        Animal newAnimal = Animal(ownerId: uid, id: petId.v4(),
+            imageUrl: imageUrl, name: _petName, gender: _sex.name,
+            type: _type, size: _size, age: parsedAge, description: _description,
+            personality: nonNullSelectedTags, isAdopted: false);
+
+        await _databaseService.createAnimalProfile(animal: newAnimal);
+
+        if (context.mounted) Navigator.of(context).pop(); // Close the loading dialog
+        if (context.mounted) Navigator.of(context).pop();
       } catch (e) {
-        print('Error parsing age: $e');
-        _alertService.showToast(text: "Invalid age entered");
-        return;
+        if (context.mounted) Navigator.of(context).pop(); // Close the loading dialog
+        _alertService.showToast(text: "An error occurred. Please try again.");
+        print(e);
       }
-
-      Animal newAnimal = Animal(ownerId: uid, id: petId.v4(),
-          imageUrl: imageUrl, name: _petName, gender: _sex.name,
-          type: _type, size: _size, age: int.parse(_age), description: _description,
-          personality: nonNullSelectedTags, isAdopted: false);
-
-      await _databaseService.createAnimalProfile(animal: newAnimal);
-      if (newAnimal.ownerId != null) print(newAnimal.ownerId);
-
-      if (context.mounted) Navigator.of(context).pop();
     } else {
-      print("Form is invalid");
+      _alertService.showToast(text: "Form is invalid.");
     }
   }
 
