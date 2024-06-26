@@ -10,17 +10,17 @@ class PersonalityBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(right: 4.0, bottom: 4.0),
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
       decoration: BoxDecoration(
-        color: Colors.blue.shade100,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Text(
         personality,
         style: const TextStyle(
-          color: Colors.blue,
-          fontSize: 12.0,
-          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: 14.0,
+          // fontWeight: FontWeight.bold,
         ),
       ),
     );

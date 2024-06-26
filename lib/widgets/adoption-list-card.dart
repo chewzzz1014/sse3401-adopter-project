@@ -279,7 +279,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
         const SizedBox(width: 8),
         ElevatedButton(
           onPressed: () {
-            // TODO: direct to animal details page (passing _animal.id)
+            _navigationService.pushNamedArgument('/animalDetail', arguments: widget.adoptionRequest.petId);
           },
           style: OutlinedButton.styleFrom(
             side: const BorderSide(width: 0.8, color: Colors.grey),
