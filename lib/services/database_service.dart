@@ -76,6 +76,13 @@ class DatabaseService {
         .snapshots() as Stream<QuerySnapshot<Animal>>;
   }
 
+  Stream<QuerySnapshot<Animal>> getAnimalsForSwipe() {
+    return _animalsCollection
+        ?.where("isAdopted", isEqualTo: false)
+        .where("ownerId", isNotEqualTo: _authService.user!.uid)
+        .snapshots() as Stream<QuerySnapshot<Animal>>;
+  }
+
   // for chat feature
   Future<bool> checkChatExists(String uid1, String uid2) async {
     String chatID = generateChatID(uid1: uid1, uid2: uid2);
