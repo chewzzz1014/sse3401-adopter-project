@@ -14,6 +14,7 @@ import '../../services/alert_service.dart';
 import '../../services/database_service.dart';
 import '../../services/storage_service.dart';
 import '../../widgets/multi_select_tags_drop_down.dart';
+import '../../widgets/pet-personality-badge.dart';
 import '../add-animal.dart';
 import '../../constants.dart' as Constants;
 
@@ -377,11 +378,21 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
                       style: GoogleFonts.inter(
                           fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: MultiSelectTagsDropDown(
-                          multiDropdownController: _multiDropdownController),
-                    ),
+                    if (isOwner)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: MultiSelectTagsDropDown(
+                            multiDropdownController: _multiDropdownController),
+                      ),
+                    if(!isOwner)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                        child: Wrap(
+                          children: _personality!
+                              .map((p) => PersonalityBadge(personality: p))
+                              .toList(),
+                        ),
+                      ),
                     const SizedBox(height: 16.0),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -427,14 +438,15 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
-                          onPressed: _updateAnimalDetail,
-                          child: Text(
-                            isOwner ? 'Update' : 'Adopt',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
+                        if(isOwner)
+                          ElevatedButton(
+                            onPressed: _updateAnimalDetail,
+                            child: Text(
+                              'Update',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
                           ),
-                        ),
                         const SizedBox(width: 16.0),
                         OutlinedButton(
                           onPressed: () {
