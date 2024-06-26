@@ -47,11 +47,11 @@ class _SwipeAnimalPageState extends State<SwipeAnimalPage>
   }
 
   void _initAnimals() {
-    _databaseService.getAnimals().listen((QuerySnapshot<Animal> snapshot) {
+    _databaseService.getAnimalsForSwipe().listen((QuerySnapshot<Animal> snapshot) {
 
       List<Animal> animals = snapshot.docs.map(
               (doc) => doc.data()
-      ).where((animal) => animal.ownerId != _authService.user!.uid).toList();
+      ).toList();
       setState(() {
         animalsToShow = animals;
         allSwiped = false;
