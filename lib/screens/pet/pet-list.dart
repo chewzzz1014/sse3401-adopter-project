@@ -78,6 +78,7 @@ class _PetListPageState extends State<PetListPage> {
                                   Animal animal = animals[index].data();
                                   return PetCard(
                                     animal: animal,
+                                    documentId: animals[index].id,
                                   );
                                 },
                               ),

@@ -121,8 +121,16 @@ class DatabaseService {
     return _usersCollection?.doc(_authService.user!.uid).get();
   }
 
+  getCurrentAnimalProfile(String documentId) {
+    return _animalsCollection?.doc(documentId).get();
+  }
+
   Future<void> updateUserProfile(String userId, UserProfile userProfile) async {
     await _usersCollection?.doc(userId).update(userProfile.toJson());
+  }
+
+  Future<void> updateAnimalDetail(String animalId, Animal animalDetail) async {
+    await _animalsCollection?.doc(animalId).update(animalDetail.toJson());
   }
 
   // for adoption request

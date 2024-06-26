@@ -53,7 +53,7 @@ class _AddPetPageState extends State<AddPetPage> {
   PlatformFile? pickedHealthDoc;
 
   final MultiSelectController _multiDropdownController =
-      MultiSelectController();
+  MultiSelectController();
   // Define TextEditingController for each text field
   final TextEditingController _petNameController = TextEditingController();
   final TextEditingController _sizeController = TextEditingController();
@@ -92,7 +92,6 @@ class _AddPetPageState extends State<AddPetPage> {
 
   Future uploadImage() async {
     PermissionStatus status = await Permission.storage.request();
-    print('$status');
     if (status.isDenied) {
       return _alertService.showToast(text: "Access to storage denied");
     }
