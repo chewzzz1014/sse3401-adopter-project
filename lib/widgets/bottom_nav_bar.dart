@@ -37,7 +37,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             Icons.volunteer_activism,
           ),
         ),
-        const BottomNavigationBarItem(
+        BottomNavigationBarItem(
           label: 'pet_list',
           icon: Icon(
             IconData(0xe4a1, fontFamily: 'MaterialIcons'),
