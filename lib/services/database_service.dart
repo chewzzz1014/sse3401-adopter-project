@@ -130,7 +130,7 @@ class DatabaseService {
   }
 
   Future<void> updateAnimalDetail(String animalId, Animal animalDetail) async {
-    await _usersCollection?.doc(animalId).update(animalDetail.toJson());
+    await _animalsCollection?.doc(animalId).update(animalDetail.toJson());
   }
 
   // for adoption request

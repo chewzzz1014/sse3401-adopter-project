@@ -92,7 +92,6 @@ class _AddPetPageState extends State<AddPetPage> {
 
   Future uploadImage() async {
     PermissionStatus status = await Permission.storage.request();
-    print('$status');
     if (status.isDenied) {
       return _alertService.showToast(text: "Access to storage denied");
     }
