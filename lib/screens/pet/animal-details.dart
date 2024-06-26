@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -448,6 +449,43 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
                             ),
                           ),
                         const SizedBox(width: 16.0),
+                        if(isOwner)
+                          ElevatedButton(
+                            onPressed: () async {
+                              String animalId = _animalDetail!.id!;
+
+                              try {
+                                final animalSnapshot = await _databaseService.getAnimalById(animalId);
+
+                                // Query to find adoption request documents with the matching petId
+                                final adoptionRequestStream = _databaseService.getAllReqsWithAnimal(animalId);
+                                if (animalSnapshot.exists) {
+                                  await animalSnapshot.reference.delete();
+                                }
+
+                                adoptionRequestStream.listen((QuerySnapshot snapshot) async {
+                                  for (final doc in snapshot.docs) {
+                                    await doc.reference.delete();
+                                  }
+                                });
+
+                                _alertService.showToast(
+                                  text: 'Successfully deleted',
+                                  icon: Icons.check,
+                                );
+
+                                Navigator.pop(context);
+                              } catch(e) {
+                                _alertService.showToast(
+                                  text: 'An error occurred: $e',
+                                  icon: Icons.error,
+                                );
+                              }
+                            },
+                            child: Icon(Icons.delete, color: Theme.of(context).colorScheme.primary,),
+                          ),
+                        if(isOwner)
+                          const SizedBox(width: 16.0),
                         OutlinedButton(
                           onPressed: () {
                             Navigator.pop(context);

@@ -204,4 +204,10 @@ class DatabaseService {
     );
     await docRef.set(chat);
   }
+
+  Stream<QuerySnapshot<AdoptionRequest>> getAllReqsWithAnimal(String animalId) {
+    return _adoptionRequestsCollection
+        ?.where('petId', isEqualTo: animalId)
+        .snapshots() as Stream<QuerySnapshot<AdoptionRequest>>;
+  }
 }
