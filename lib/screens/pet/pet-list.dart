@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sse3401_adopter_project/mockData/mock-pet.dart';
@@ -89,39 +90,39 @@ class _PetListPageState extends State<PetListPage> {
                           );
                         },
                       ),
-                      Column(
-                        children: [
-                          const Text(
-                            'Received',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const Text(
+                              'Received',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          StreamBuilder(
-                            stream:
-                                _databaseService.getReceivedAdoptionRequests(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return const Center(
-                                    child: Text('Unable to load data.'));
-                              }
-                              print(snapshot.data);
-                              if (snapshot.hasData && snapshot.data != null) {
-                                final receivedRequests = snapshot.data!.docs;
-
-                                if (receivedRequests.isEmpty) {
+                            StreamBuilder(
+                              stream: _databaseService
+                                  .getReceivedAdoptionRequests(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasError) {
                                   return const Center(
-                                      child: Text(
-                                    "No records available :(",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ));
+                                      child: Text('Unable to load data.'));
                                 }
+                                print(snapshot.data);
+                                if (snapshot.hasData && snapshot.data != null) {
+                                  final receivedRequests = snapshot.data!.docs;
 
-                                return SingleChildScrollView(
-                                  child: ListView.builder(
+                                  if (receivedRequests.isEmpty) {
+                                    return const Center(
+                                        child: Text(
+                                      "No records available :(",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ));
+                                  }
+
+                                  return ListView.builder(
                                     itemCount: receivedRequests.length,
                                     shrinkWrap: true,
                                     padding: const EdgeInsets.only(top: 8),
@@ -135,66 +136,65 @@ class _PetListPageState extends State<PetListPage> {
                                         type: 'Received',
                                       );
                                     },
-                                  ),
-                                );
-                              }
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          ),
-                          const Text(
-                            'Sent',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          StreamBuilder(
-                            stream: _databaseService.getSentAdoptionRequests(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return const Center(
-                                    child: Text('Unable to load data.'));
-                              }
-                              print(snapshot.data);
-                              if (snapshot.hasData && snapshot.data != null) {
-                                final sentRequests = snapshot.data!.docs;
-
-                                if (sentRequests.isEmpty) {
-                                  return const Center(
-                                      child: Text(
-                                        "No records available :(",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ));
+                                  );
                                 }
-
-                                return SingleChildScrollView(
-                                  child: ListView.builder(
-                                    itemCount: sentRequests.length,
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.only(top: 8),
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      AdoptionRequest req =
-                                          sentRequests[index].data();
-                                      return AdoptionCard(
-                                        adoptionRequest: req,
-                                        type: 'Sent',
-                                      );
-                                    },
-                                  ),
+                                return const Center(
+                                  child: CircularProgressIndicator(),
                                 );
-                              }
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          ),
-                        ],
+                              },
+                            ),
+                            const Text(
+                              'Sent',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            StreamBuilder(
+                              stream:
+                                  _databaseService.getSentAdoptionRequests(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasError) {
+                                  return const Center(
+                                      child: Text('Unable to load data.'));
+                                }
+                                print(snapshot.data);
+                                if (snapshot.hasData && snapshot.data != null) {
+                                  final sentRequests = snapshot.data!.docs;
+
+                                  if (sentRequests.isEmpty) {
+                                    return const Center(
+                                        child: Text(
+                                      "No records available :(",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ));
+                                  }
+
+                                  return ListView.builder(
+                                      itemCount: sentRequests.length,
+                                      shrinkWrap: true,
+                                      padding: const EdgeInsets.only(top: 8),
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        AdoptionRequest req =
+                                            sentRequests[index].data();
+                                        return AdoptionCard(
+                                          adoptionRequest: req,
+                                          type: 'Sent',
+                                        );
+                                      },
+                                  );
+                                }
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

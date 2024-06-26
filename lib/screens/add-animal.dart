@@ -387,7 +387,9 @@ class _AddPetPageState extends State<AddPetPage> {
                           color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
-                  trailing: pickedPicture != null ? const Icon(Icons.check) : const Icon(Icons.close),
+                  trailing: pickedPicture != null
+                      ? const Icon(IconData(0xf635, fontFamily: 'MaterialIcons'), color: Colors.green)
+                      : const Icon(Icons.error, color: Colors.red),
                 ),
               ),
               if (pickedPicture != null)
@@ -410,7 +412,9 @@ class _AddPetPageState extends State<AddPetPage> {
                           color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
-                  trailing: pickedHealthDoc != null ? const Icon(Icons.check) : const Icon(Icons.close),
+                  trailing: pickedHealthDoc != null
+                  ? const Icon(IconData(0xf635, fontFamily: 'MaterialIcons'), color: Colors.green)
+                  : const Icon(Icons.error, color: Colors.red)
                 ),
               ),
               const SizedBox(height: 16.0),

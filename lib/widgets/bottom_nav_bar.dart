@@ -34,10 +34,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
         BottomNavigationBarItem(
           label: 'swipe',
           icon: Icon(
-            Icons.swipe,
+            Icons.volunteer_activism,
           ),
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           label: 'pet_list',
           icon: Icon(
             IconData(0xe4a1, fontFamily: 'MaterialIcons'),
