@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:sse3401_adopter_project/screens/auth/login.dart';
 import 'package:sse3401_adopter_project/screens/auth/signup.dart';
 import 'package:sse3401_adopter_project/screens/pet/animal-details.dart';
@@ -14,7 +13,7 @@ class NavigationService {
   late GlobalKey<NavigatorState> _navigatorKey;
 
   final Map<String, Widget Function(BuildContext)> _routes = {
-    "/login": (context) => LoginPage(),
+    "/login": (context) => const LoginPage(),
     '/addAnimal': (context) => const AddPetPage(),
     '/home': (context) => const MyHomePage(),
     '/profile': (context) => UserProfilePage(),
