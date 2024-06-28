@@ -126,8 +126,7 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
   }
 
   bool _hasMadeChanges() {
-    print("_petName != _animalDetail?.name: ${_petName != _animalDetail?.name}");
-    bool hasChanges =  (_pickedImage != null ||
+    bool hasChanges =  (pickedPicture != null ||
         _petName != _animalDetail?.name ||
         _size != _animalDetail?.size ||
         _age != _animalDetail?.age ||
@@ -153,9 +152,9 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
 
         String? imageUrl = _animalImageUrl;
 
-        if (_pickedImage != null) {
+        if (pickedPicture != null) {
           imageUrl = await _storageService.uploadAnimalsImage(
-            file: File(_pickedImage!.path),
+            file: File(pickedPicture!.path!),
             petName: _petName!,
           );
         }
@@ -187,6 +186,11 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
         _fetchAnimalDetail(); // update the latest user profile data
         Navigator.pop(context);
 
+      } else {
+        _alertService.showToast(
+          text: 'Nothing has changed.',
+          icon: Icons.error,
+        );
       }
     } catch (e) {
       _alertService.showToast(
@@ -400,13 +404,7 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
                       child: isOwner ? ListTile(
                         leading: ElevatedButton(
                           onPressed: () async {
-                            File? file =
                             await uploadImage();
-                            if (file != null) {
-                              setState(() {
-                                _pickedImage = file;
-                              });
-                            }
                           },
                           child: Text(
                             'Upload a picture of your pet!',
@@ -417,24 +415,23 @@ class _AnimalDetailsPageState extends State<AnimalDetailsPage> {
                         trailing: pickedPicture != null ? const Icon(Icons.check) : const Icon(Icons.close),
                       ) : Container(),
                     ),
-                    if (pickedPicture != null)
-                      SizedBox(
-                        width: 200,
-                        child: Image.file(
-                          File(pickedPicture!.path!),
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    if (_animalImageUrl != null)
-                      SizedBox(
-                        width: 200,
-                        child: Image.network(
-                          _animalImageUrl!,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    pickedPicture != null
+                        ? SizedBox(
+                            width: 200,
+                            child: Image.file(
+                              File(pickedPicture!.path!),
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : SizedBox(
+                            width: 200,
+                            child: Image.network(
+                              _animalImageUrl!,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                     const SizedBox(height: 16.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

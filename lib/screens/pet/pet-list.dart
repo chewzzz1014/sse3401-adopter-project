@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:sse3401_adopter_project/mockData/mock-pet.dart';
 import 'package:sse3401_adopter_project/widgets/adoption-list-card.dart';
 
 import '../../models/animal-adoption-request.dart';
